@@ -58,18 +58,54 @@ public class ChessPiece {
         if (piece.getPieceType() == PieceType.BISHOP) {
             return bishopMoves(board, myPosition);
         }
+        if (piece.getPieceType() == PieceType.KING) {
+//            return kingMoves(board, myPosition);
+        }
+        if (piece.getPieceType() == PieceType.KNIGHT) {
+            return knightMoves(board, myPosition);
+        }
+        if (piece.getPieceType() == PieceType.PAWN) {
+//            return pawnMoves(board, myPosition);
+        }
+        if (piece.getPieceType() == PieceType.QUEEN) {
+//            return queenMoves(board, myPosition);
+        }
         if (piece.getPieceType() == PieceType.ROOK) {
             return rookMoves(board, myPosition);
         }
-        return List.of();
     }
+
 
     private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
 
         int[][] directions = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
-        return directionalMoves(board, row, col, directions);
+        return dynamicMoves(board, row, col, directions);
+    }
+
+    private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+        int[][] directions = {};
+        return staticMoves(board, row, col, directions);
+    }
+
+    private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+        int[][] directions = {{1, 2}, {2, 1}, {2, -1}, {1, -2}, {-1, -2}, {-2, -1}, {-2, 1}, {-1, 2}};
+        return staticMoves(board, row, col, directions);
+    }
+
+    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+        int[][] directions = {};
+        return staticMoves(board, row, col, directions);
     }
 
     private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
@@ -77,7 +113,7 @@ public class ChessPiece {
         int col = myPosition.getColumn();
 
         int[][] directions = {{1, 0}, {0, 1}, {-1, 0}, {0,-1}};
-        return directionalMoves(board, row, col, directions);
+        return dynamicMoves(board, row, col, directions);
     }
 
     private Boolean onBoard(int row, int col) {
@@ -88,7 +124,7 @@ public class ChessPiece {
         return board.getPiece(new ChessPosition(row, col)) != null;
     }
 
-    private Collection<ChessMove> directionalMoves(ChessBoard board, int row, int col, int[][] directions) {
+    private Collection<ChessMove> dynamicMoves(ChessBoard board, int row, int col, int[][] directions) {
         Collection<ChessMove> moves = new ArrayList<ChessMove>();
         int tmp_row = row;
         int tmp_col = col;
@@ -116,4 +152,29 @@ public class ChessPiece {
         return moves;
     }
 
+    private Collection<ChessMove> staticMoves(ChessBoard board, int row, int col, int[][] directions) {
+        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+
+        for (int[] dir : directions) {
+            int tmp_row = row;
+            int tmp_col = col;
+            tmp_row += dir[0];
+            tmp_col += dir[1];
+            if (!onBoard(tmp_row, tmp_col)) {
+                continue;
+            }
+            if (squareOccupied(board, tmp_row, tmp_col)) {      // if there is a piece in the way
+                if (board.getPiece(new ChessPosition(tmp_row, tmp_col)).getTeamColor() == pieceColor) {     // teammates block
+                    continue;
+                } else if (board.getPiece(new ChessPosition(tmp_row, tmp_col)).getTeamColor() != pieceColor) {        // allow piece take, but no further
+                    moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, tmp_col), null));
+                    continue;
+                }
+            }
+            moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, tmp_col), null));
+            tmp_row = row;
+            tmp_col = col;
+        }
+        return moves;
+    }
 }
