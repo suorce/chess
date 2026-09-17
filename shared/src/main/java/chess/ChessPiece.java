@@ -58,6 +58,9 @@ public class ChessPiece {
         if (piece.getPieceType() == PieceType.BISHOP) {
             return bishopMoves(board, myPosition);
         }
+        if (piece.getPieceType() == PieceType.ROOK) {
+            return rookMoves(board, myPosition);
+        }
         return List.of();
     }
 
@@ -65,10 +68,18 @@ public class ChessPiece {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
 
-        Collection<ChessMove> moves = new ArrayList<ChessMove>();
         int[][] directions = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
         return directionalMoves(board, row, col, directions);
     }
+
+    private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+        int[][] directions = {{1, 0}, {0, 1}, {-1, 0}, {0,-1}};
+        return directionalMoves(board, row, col, directions);
+    }
+
     private Boolean onBoard(int row, int col) {
         return row >= 1 && row <= 8 && col >= 1 && col <= 8;
     }
