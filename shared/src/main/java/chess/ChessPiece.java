@@ -36,7 +36,7 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return pieceColor;
     }
 
     /**
@@ -75,12 +75,13 @@ public class ChessPiece {
                 if (!onBoard(tmp_row, tmp_col)) {
                     break;
                 }
-                if (teammate) {     // teammates block
-                    break;
-                }
-                if (enemy) {        // allow piece take, but no further
-                    moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, tmp_col), null));
-                    break;
+                if (squareOccupied(board, tmp_row, tmp_col)) {      // if there is a piece in the way
+                    if (board.getPiece(new ChessPosition(tmp_row, tmp_col)).getTeamColor() == pieceColor) {     // teammates block
+                        break;
+                    } else if (board.getPiece(new ChessPosition(tmp_row, tmp_col)).getTeamColor() != pieceColor) {        // allow piece take, but no further
+                        moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, tmp_col), null));
+                        break;
+                    }
                 }
                 moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, tmp_col), null));
             }
@@ -91,6 +92,13 @@ public class ChessPiece {
     }
     private Boolean onBoard(int row, int col) {
         return row >= 1 && row <= 8 && col >= 1 && col <= 8;
+    }
+
+    private Boolean squareOccupied(ChessBoard board, int row, int col) {
+        if (board.getPiece(new ChessPosition(row, col)) != null) {
+            return true;
+        }
+        return false;
     }
 
 }
