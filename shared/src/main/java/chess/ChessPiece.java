@@ -75,6 +75,13 @@ public class ChessPiece {
                 if (!onBoard(tmp_row, tmp_col)) {
                     break;
                 }
+                if (teammate) {     // teammates block
+                    break;
+                }
+                if (enemy) {        // allow piece take, but no further
+                    moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, tmp_col), null));
+                    break;
+                }
                 moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, tmp_col), null));
             }
             tmp_row = row;
