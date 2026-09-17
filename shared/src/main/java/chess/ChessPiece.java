@@ -59,7 +59,7 @@ public class ChessPiece {
             return bishopMoves(board, myPosition);
         }
         if (piece.getPieceType() == PieceType.KING) {
-//            return kingMoves(board, myPosition);
+            return kingMoves(board, myPosition);
         }
         if (piece.getPieceType() == PieceType.KNIGHT) {
             return knightMoves(board, myPosition);
@@ -73,6 +73,7 @@ public class ChessPiece {
         if (piece.getPieceType() == PieceType.ROOK) {
             return rookMoves(board, myPosition);
         }
+        return List.of();
     }
 
 
@@ -88,7 +89,7 @@ public class ChessPiece {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
 
-        int[][] directions = {};
+        int[][] directions = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
         return staticMoves(board, row, col, directions);
     }
 
