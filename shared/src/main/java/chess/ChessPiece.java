@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -55,8 +56,34 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == PieceType.BISHOP) {
-            return List.of(new ChessMove(new ChessPosition(5,4), new ChessPosition(1,8), null));
+            return bishopMoves(board, myPosition);
         }
         return List.of();
     }
+
+    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        int tmp_row = row;
+        int tmp_col = col;
+        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        int[][] directions = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+        for (int[] dir : directions) {
+            while (true) {
+                tmp_row += dir[0];
+                tmp_col += dir[1];
+                if (!onBoard(tmp_row, tmp_col)) {
+                    break;
+                }
+                moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, tmp_col), null));
+            }
+            tmp_row = row;
+            tmp_col = col;
+        }
+        return moves;
+    }
+    private Boolean onBoard(int row, int col) {
+        return row >= 1 && row <= 8 && col >= 1 && col <= 8;
+    }
+
 }
