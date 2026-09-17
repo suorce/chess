@@ -64,10 +64,24 @@ public class ChessPiece {
     private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
-        int tmp_row = row;
-        int tmp_col = col;
+
         Collection<ChessMove> moves = new ArrayList<ChessMove>();
         int[][] directions = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+        return directionalMoves(board, row, col, directions);
+    }
+    private Boolean onBoard(int row, int col) {
+        return row >= 1 && row <= 8 && col >= 1 && col <= 8;
+    }
+
+    private Boolean squareOccupied(ChessBoard board, int row, int col) {
+        return board.getPiece(new ChessPosition(row, col)) != null;
+    }
+
+    private Collection<ChessMove> directionalMoves(ChessBoard board, int row, int col, int[][] directions) {
+        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        int tmp_row = row;
+        int tmp_col = col;
+
         for (int[] dir : directions) {
             while (true) {
                 tmp_row += dir[0];
@@ -89,16 +103,6 @@ public class ChessPiece {
             tmp_col = col;
         }
         return moves;
-    }
-    private Boolean onBoard(int row, int col) {
-        return row >= 1 && row <= 8 && col >= 1 && col <= 8;
-    }
-
-    private Boolean squareOccupied(ChessBoard board, int row, int col) {
-        if (board.getPiece(new ChessPosition(row, col)) != null) {
-            return true;
-        }
-        return false;
     }
 
 }
