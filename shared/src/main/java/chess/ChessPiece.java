@@ -68,7 +68,7 @@ public class ChessPiece {
 //            return pawnMoves(board, myPosition);
         }
         if (piece.getPieceType() == PieceType.QUEEN) {
-//            return queenMoves(board, myPosition);
+            return queenMoves(board, myPosition);
         }
         if (piece.getPieceType() == PieceType.ROOK) {
             return rookMoves(board, myPosition);
@@ -107,6 +107,14 @@ public class ChessPiece {
 
         int[][] directions = {};
         return staticMoves(board, row, col, directions);
+    }
+
+    private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+        int[][] directions = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}, {1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+        return dynamicMoves(board, row, col, directions);
     }
 
     private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
