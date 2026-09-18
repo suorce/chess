@@ -203,23 +203,32 @@ public class ChessPiece {
             if (!onBoard(tmp_row, tmp_col)) {
                 continue;
             }
-            if (squareOccupied(board, tmp_row, tmp_col)) {      // if there is a piece in the way
-                if (board.getPiece(new ChessPosition(tmp_row, tmp_col)).getTeamColor() == pieceColor) {     // teammates block
-                    break;
-                } else if (tmp_col == col) {                                                                // same col block
-                    break;
-                } else if (board.getPiece(new ChessPosition(tmp_row, tmp_col)).getTeamColor() != pieceColor) {        // diagonal enemy block
-                    moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, tmp_col), null));
-                    break;
+            if (squareOccupied(board, tmp_row, tmp_col)) {      // there is a piece in the way
+                if ((board.getPiece(new ChessPosition(tmp_row, tmp_col)).getTeamColor() == pieceColor) || (tmp_col == col)) {     // teammate or forward block
+                    continue;
+                } else if (board.getPiece(new ChessPosition(tmp_row, tmp_col)).getTeamColor() != pieceColor) {        // diagonal enemy block, take
+                    checkPromoAddMove(moves, row, col, tmp_row, tmp_col);
+                    continue;
                 }
             } else {
                 if (tmp_col == col) {   // empty forward square
-                    moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, tmp_col), null));
-                    break;
+                    checkPromoAddMove(moves, row, col, tmp_row, tmp_col);
                 }
             }
         }
         return moves;
+    }
+
+    private void checkPromoAddMove(Collection<ChessMove> moves, int row, int col, int tmp_row, int tmp_col) {
+        PieceType[] promotionPieces = {PieceType.QUEEN, PieceType.ROOK, PieceType.BISHOP, PieceType.KNIGHT};
+
+        if (tmp_row > 1 && tmp_row < 8) {           // normal advance
+            moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, tmp_col), null));
+        } else {
+            for (PieceType piece : promotionPieces) {   // promotion
+                moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, tmp_col), piece));
+            }
+        }
     }
 
 }
