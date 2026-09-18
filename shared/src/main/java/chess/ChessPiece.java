@@ -105,15 +105,15 @@ public class ChessPiece {
 
         switch (pieceColor) {
             case ChessGame.TeamColor.WHITE:
-                directions = new int[][]{{1, 0}};       // ,{2, 0},{1, -1},{1, 1}
+                directions = new int[][]{{1, 0},{1, -1},{1, 1}};       // {2, 0},
                 break;
             case ChessGame.TeamColor.BLACK:
-                directions = new int[][]{{-1, 0}};      // ,{-2, 0},{-1, 1},{-1, -1}
+                directions = new int[][]{{-1, 0},{-1, 1},{-1, -1}};      // {-2, 0},
                 break;
             default:
                 throw new IllegalArgumentException("Pawn must have color");
         }
-        return pMoves(board, row, col, directions);
+        return pMoves(board, row, col, directions, pieceColor);
     }
 
     private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
@@ -146,6 +146,8 @@ public class ChessPiece {
         int tmp_col = col;
 
         for (int[] dir : directions) {
+            tmp_row = row;
+            tmp_col = col;
             while (true) {
                 tmp_row += dir[0];
                 tmp_col += dir[1];
@@ -162,8 +164,6 @@ public class ChessPiece {
                 }
                 moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, tmp_col), null));
             }
-            tmp_row = row;
-            tmp_col = col;
         }
         return moves;
     }
@@ -188,9 +188,38 @@ public class ChessPiece {
                 }
             }
             moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, tmp_col), null));
-            tmp_row = row;
-            tmp_col = col;
         }
         return moves;
     }
+
+    private Collection<ChessMove> pMoves(ChessBoard board, int row, int col, int[][] directions, ChessGame.TeamColor pieceColor) {
+        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+
+        for (int[] dir : directions) {
+            int tmp_row = row;
+            int tmp_col = col;
+            tmp_row += dir[0];
+            tmp_col += dir[1];
+            if (!onBoard(tmp_row, tmp_col)) {
+                continue;
+            }
+            if (squareOccupied(board, tmp_row, tmp_col)) {      // if there is a piece in the way
+                if (board.getPiece(new ChessPosition(tmp_row, tmp_col)).getTeamColor() == pieceColor) {     // teammates block
+                    break;
+                } else if (tmp_col == col) {                                                                // same col block
+                    break;
+                } else if (board.getPiece(new ChessPosition(tmp_row, tmp_col)).getTeamColor() != pieceColor) {        // diagonal enemy block
+                    moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, tmp_col), null));
+                    break;
+                }
+            } else {
+                if (tmp_col == col) {   // empty forward square
+                    moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, tmp_col), null));
+                    break;
+                }
+            }
+        }
+        return moves;
+    }
+
 }
