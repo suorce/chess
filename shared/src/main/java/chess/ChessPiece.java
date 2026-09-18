@@ -105,10 +105,10 @@ public class ChessPiece {
 
         switch (pieceColor) {
             case ChessGame.TeamColor.WHITE:
-                directions = new int[][]{{1, 0},{1, -1},{1, 1}};       // {2, 0},
+                directions = new int[][]{{1, 0},{1, -1},{1, 1},{2, 0}};
                 break;
             case ChessGame.TeamColor.BLACK:
-                directions = new int[][]{{-1, 0},{-1, 1},{-1, -1}};      // {-2, 0},
+                directions = new int[][]{{-1, 0},{-1, 1},{-1, -1},{-2, 0}};
                 break;
             default:
                 throw new IllegalArgumentException("Pawn must have color");
@@ -203,6 +203,12 @@ public class ChessPiece {
             if (!onBoard(tmp_row, tmp_col)) {
                 continue;
             }
+            if (tmp_row - row == 2 || tmp_row - row == -2) {       // white on 2, black on 7
+                if ((pieceColor == ChessGame.TeamColor.WHITE && row == 2) || (pieceColor == ChessGame.TeamColor.BLACK && row == 7)) {                                                                        // double move
+                    doubleMove(moves, board, row, tmp_row, col, pieceColor);
+                }
+                break;
+            }
             if (squareOccupied(board, tmp_row, tmp_col)) {      // there is a piece in the way
                 if ((board.getPiece(new ChessPosition(tmp_row, tmp_col)).getTeamColor() == pieceColor) || (tmp_col == col)) {     // teammate or forward block
                     continue;
@@ -217,6 +223,15 @@ public class ChessPiece {
             }
         }
         return moves;
+    }
+
+    private void doubleMove(Collection<ChessMove> moves, ChessBoard board, int row, int tmp_row, int col, ChessGame.TeamColor pieceColor) {
+        int jumped_row = (tmp_row + row) / 2;
+        System.out.format("%d%d%d", row, tmp_row, jumped_row);
+
+        if (!squareOccupied(board, jumped_row, col) && !squareOccupied(board, tmp_row, col)) {
+            moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, col), null));
+        }
     }
 
     private void checkPromoAddMove(Collection<ChessMove> moves, int row, int col, int tmp_row, int tmp_col) {
