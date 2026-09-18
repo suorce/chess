@@ -55,25 +55,22 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
-        if (piece.getPieceType() == PieceType.BISHOP) {
-            return bishopMoves(board, myPosition);
+        switch (piece.getPieceType()) {
+            case PieceType.BISHOP:
+                return bishopMoves(board, myPosition);
+            case PieceType.KING:
+                return kingMoves(board, myPosition);
+            case PieceType.KNIGHT:
+                return knightMoves(board, myPosition);
+            case PieceType.PAWN:
+                return pawnMoves(board, myPosition);
+            case PieceType.QUEEN:
+                return queenMoves(board, myPosition);
+            case PieceType.ROOK:
+                return rookMoves(board, myPosition);
+            default:
+                throw new IllegalArgumentException("There must be a piece at the position");
         }
-        if (piece.getPieceType() == PieceType.KING) {
-            return kingMoves(board, myPosition);
-        }
-        if (piece.getPieceType() == PieceType.KNIGHT) {
-            return knightMoves(board, myPosition);
-        }
-        if (piece.getPieceType() == PieceType.PAWN) {
-//            return pawnMoves(board, myPosition);
-        }
-        if (piece.getPieceType() == PieceType.QUEEN) {
-            return queenMoves(board, myPosition);
-        }
-        if (piece.getPieceType() == PieceType.ROOK) {
-            return rookMoves(board, myPosition);
-        }
-        return List.of();
     }
 
 
@@ -104,9 +101,19 @@ public class ChessPiece {
     private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
+        int[][] directions;
 
-        int[][] directions = {};
-        return staticMoves(board, row, col, directions);
+        switch (pieceColor) {
+            case ChessGame.TeamColor.WHITE:
+                directions = new int[][]{{1, 0}};       // ,{2, 0},{1, -1},{1, 1}
+                break;
+            case ChessGame.TeamColor.BLACK:
+                directions = new int[][]{{-1, 0}};      // ,{-2, 0},{-1, 1},{-1, -1}
+                break;
+            default:
+                throw new IllegalArgumentException("Pawn must have color");
+        }
+        return pMoves(board, row, col, directions);
     }
 
     private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
