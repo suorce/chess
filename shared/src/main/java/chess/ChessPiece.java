@@ -227,7 +227,6 @@ public class ChessPiece {
 
     private void doubleMove(Collection<ChessMove> moves, ChessBoard board, int row, int tmp_row, int col, ChessGame.TeamColor pieceColor) {
         int jumped_row = (tmp_row + row) / 2;
-        System.out.format("%d%d%d", row, tmp_row, jumped_row);
 
         if (!squareOccupied(board, jumped_row, col) && !squareOccupied(board, tmp_row, col)) {
             moves.add(new ChessMove(new ChessPosition(row, col), new ChessPosition(tmp_row, col), null));
