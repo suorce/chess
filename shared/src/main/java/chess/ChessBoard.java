@@ -60,9 +60,20 @@ public class ChessBoard {
 
     @Override
     public String toString() {
-        return "ChessBoard{" +
-                "squares=" + Arrays.toString(squares) +
-                '}';
+        StringBuilder result = new StringBuilder();
+
+        for (ChessPiece[] row : squares) {
+            for (ChessPiece piece : row) {
+                if (piece == null) {
+                    result.append(". ");
+                } else {
+                    result.append(piece).append(" ");
+                }
+            }
+            result.append("\n");
+        }
+
+        return result.toString();
     }
 
     @Override
