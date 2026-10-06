@@ -56,11 +56,9 @@ public class ChessGame {
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition) throws InvalidMoveException {
+    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = board.getPiece(startPosition);
-        if (piece == null) {
-            throw new InvalidMoveException("Invalid move: No piece there");
-        }
+
         Collection<ChessMove> moves = piece.pieceMoves(board,startPosition);
         TeamColor color = piece.getTeamColor();
 
@@ -69,12 +67,7 @@ public class ChessGame {
             gameCopy.board.movePiece(move);
             return gameCopy.isInCheck(color);
         });
-
-        if (!moves.isEmpty()) {
-            return moves;
-        } else {
-            return null;
-        }
+        return moves;
     }
 
     /**
@@ -85,12 +78,15 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = board.getPiece(move.getStartPosition());
+        if (piece == null) {
+            throw new InvalidMoveException("No piece here");
+        }
         if (piece.getTeamColor() != teamTurn) {
             throw new InvalidMoveException("Not this player's turn");
         }
         Collection<ChessMove> moves = validMoves(move.getStartPosition());
-        if (moves == null) {
-            throw new InvalidMoveException("This piece has no valid moves");
+        if (moves.isEmpty()) {
+            throw new InvalidMoveException("Piece has no valid moves");
         }
         if (moves.contains(move)) {
             board.movePiece(move);
