@@ -56,8 +56,11 @@ public class ChessGame {
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+    public Collection<ChessMove> validMoves(ChessPosition startPosition) throws InvalidMoveException {
         ChessPiece piece = board.getPiece(startPosition);
+        if (piece == null) {
+            throw new InvalidMoveException("Invalid move: No piece there");
+        }
         Collection<ChessMove> moves = piece.pieceMoves(board,startPosition);
         TeamColor color = piece.getTeamColor();
 
@@ -68,7 +71,11 @@ public class ChessGame {
                 moves.remove(move);
             }
         }
+        if (!moves.isEmpty()) {
         return moves;
+        } else {
+            return null;
+        }
     }
 
     /**
