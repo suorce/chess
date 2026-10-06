@@ -85,8 +85,17 @@ public class ChessGame {
         Collection<ChessMove> moves = validMoves(move.getStartPosition());
         if (moves.contains(move)) {
             board.movePiece(move);
+            swapTurns(piece.getTeamColor());
         } else {
             throw new InvalidMoveException("Invalid move: Either not valid or leaves king in check");
+        }
+    }
+
+    private void swapTurns(TeamColor teamColor) {
+        if (teamColor == TeamColor.WHITE) {
+            teamTurn = TeamColor.BLACK;
+        } else {
+            teamTurn = TeamColor.WHITE;
         }
     }
 
