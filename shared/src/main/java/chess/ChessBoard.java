@@ -16,6 +16,18 @@ public class ChessBoard {
 
     }
 
+    public ChessBoard(ChessBoard other) {
+        this.squares = new ChessPiece[8][8];
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (other.squares[row][col] != null) {
+                    ChessPiece otherPiece = other.getPiece(new ChessPosition(row+1, col+1));
+                    this.squares[row][col] = new ChessPiece(otherPiece);
+                }
+            }
+        }
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
@@ -36,6 +48,20 @@ public class ChessBoard {
     public ChessPiece getPiece(ChessPosition position) {
         return squares[position.getRow()-1][position.getColumn()-1];
     }
+
+    public void movePiece(ChessMove move){
+        ChessPosition startPosition = move.getStartPosition();
+        ChessPosition endPosition = move.getEndPosition();
+        ChessGame.TeamColor color = getPiece(startPosition).getTeamColor();
+        ChessPiece.PieceType type = getPiece(startPosition).getPieceType();
+        addPiece(startPosition, null);
+        if (move.getPromotionPiece() == null) {
+            addPiece(endPosition, new ChessPiece(color, type));
+        } else {
+            addPiece(endPosition, new ChessPiece(color, move.getPromotionPiece()));
+        }
+    }
+    
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
@@ -61,6 +87,7 @@ public class ChessBoard {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
+        result.append("\n");
 
         for (ChessPiece[] row : squares) {
             for (ChessPiece piece : row) {
