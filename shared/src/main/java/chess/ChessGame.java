@@ -64,15 +64,14 @@ public class ChessGame {
         Collection<ChessMove> moves = piece.pieceMoves(board,startPosition);
         TeamColor color = piece.getTeamColor();
 
-        for (ChessMove move : moves) {
+        moves.removeIf(move -> {
             ChessGame gameCopy = new ChessGame(this);
             gameCopy.board.movePiece(move);
-            if (gameCopy.isInCheck(color)) {
-                moves.remove(move);
-            }
-        }
+            return gameCopy.isInCheck(color);
+        });
+
         if (!moves.isEmpty()) {
-        return moves;
+            return moves;
         } else {
             return null;
         }
@@ -87,14 +86,17 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = board.getPiece(move.getStartPosition());
         if (piece.getTeamColor() != teamTurn) {
-            throw new InvalidMoveException("Invalid move: Not this player's turn");
+            throw new InvalidMoveException("Not this player's turn");
         }
         Collection<ChessMove> moves = validMoves(move.getStartPosition());
+        if (moves == null) {
+            throw new InvalidMoveException("This piece has no valid moves");
+        }
         if (moves.contains(move)) {
             board.movePiece(move);
             swapTurns(piece.getTeamColor());
         } else {
-            throw new InvalidMoveException("Invalid move: Either not valid or leaves king in check");
+            throw new InvalidMoveException("Move either not valid or leaves king in check");
         }
     }
 
@@ -131,9 +133,6 @@ public class ChessGame {
                     moves.addAll(piece.pieceMoves(board,position));
                 }
             }
-        }
-        if (kingPosition == null) {
-            throw new IllegalStateException("King not found");
         }
         for (ChessMove move : moves) {
             if (move.getEndPosition().equals(kingPosition)) {
