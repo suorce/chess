@@ -81,6 +81,7 @@ public class ChessBoard {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
+        result.append("\n");
 
         for (ChessPiece[] row : squares) {
             for (ChessPiece piece : row) {
