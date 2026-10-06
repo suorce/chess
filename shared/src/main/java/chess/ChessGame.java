@@ -71,6 +71,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        ChessPosition kingPosition = null;
         for (int r = 1; r <= 8; r++) {
             for (int c = 1; c <= 8; c++) {
                 ChessPosition position = new ChessPosition(r,c);
@@ -80,7 +81,7 @@ public class ChessGame {
                 }
                 //find kingPosition
                 if (piece.getTeamColor() == teamColor && piece.getPieceType() == ChessPiece.PieceType.KING) {
-                    ChessPosition kingPosition = new ChessPosition(r,c);
+                    kingPosition = new ChessPosition(r,c);
                 }
                 // find enemy moves
                 else if (piece.getTeamColor() != teamColor) {
@@ -88,6 +89,15 @@ public class ChessGame {
                 }
             }
         }
+        if (kingPosition == null) {
+            throw new IllegalStateException("King not found");
+        }
+        for (ChessMove move : moves) {
+            if (move.getEndPosition() == kingPosition) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
