@@ -16,6 +16,9 @@ public class ChessGame {
 
     public ChessGame() {
 
+    public ChessGame(ChessGame other) {
+        this.board = new ChessBoard(other.board);
+        this.teamTurn = other.teamTurn;
     }
 
     /**
