@@ -130,6 +130,21 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        return noValidMoves(teamColor) && isInCheck(teamColor);
+    }
+
+    /**
+     * Determines if the given team is in stalemate, which here is defined as having
+     * no valid moves while not in check.
+     *
+     * @param teamColor which team to check for stalemate
+     * @return True if the specified team is in stalemate, otherwise false
+     */
+    public boolean isInStalemate(TeamColor teamColor) {
+        return noValidMoves(teamColor) && !isInCheck(teamColor);
+    }
+
+    private boolean noValidMoves(TeamColor teamColor) {
         Collection<ChessMove> moves = new ArrayList<ChessMove>();
         for (int r = 1; r <= 8; r++) {
             for (int c = 1; c <= 8; c++) {
