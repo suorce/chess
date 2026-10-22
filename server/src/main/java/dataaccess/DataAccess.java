@@ -6,9 +6,9 @@ public interface DataAccess {
 
     void clear() throws DataAccessException;
 
-//    UserData createUser(UserData userData) throws DataAccessException;
-//
-//    UserData getUser(String username) throws DataAccessException;
+    UserData createUser(UserData userData) throws DataAccessException;
+
+    UserData getUser(String username) throws DataAccessException;
 //
 //    GameData createGame() throws DataAccessException;
 //

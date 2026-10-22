@@ -16,4 +16,18 @@ public class MemoryDataAccess implements DataAccess {
         games.clear();
     }
 
+    public UserData createUser(UserData userData) throws DataAccessException {
+        String username = userData.username();
+        users.put(username, userData);
+        return userData;
+    }
+
+    public UserData getUser(String username) {
+        if (!users.containsKey(username)) {
+            return null;
+        } else {
+            return users.get(username);
+        }
+    }
+
 }
