@@ -34,7 +34,7 @@ public class Service {
     private AuthData createAuth(String username) throws DataAccessException {
         String authToken = generateToken();
         AuthData authData = new AuthData(username, authToken);
-        dataAccess.createAuth(authData);
+        return dataAccess.createAuth(authData);
     }
 
     public static String generateToken() {

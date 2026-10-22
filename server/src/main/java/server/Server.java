@@ -1,5 +1,6 @@
 package server;
 
+import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
 import io.javalin.*;
@@ -20,7 +21,13 @@ public class Server {
     public Server(Service service) {
         this.service = service;
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
-                .delete("/db", this::delete);
+                .delete("/db", this::delete)
+                .post("/user", this::register);
+//                .post("/session", this::login)
+//                .delete("/session", this::logout)
+//                .get("/game", this::listGames)
+//                .post("/game", this::createGame)
+//                .put("/game", this::joinGame)
     }
 
     public int run(int desiredPort) {
@@ -35,5 +42,11 @@ public class Server {
     private void delete(@NotNull Context ctx) throws DataAccessException {
         service.clear();
         ctx.status(200);
+    }
+
+    private void register(@NotNull Context ctx) throws DataAccessException {
+        UserData userData = new Gson().fromJson(ctx.body(), UserData.class);
+        AuthData authData = service.createUser(userData);
+        ctx.result(authData.toString());
     }
 }
