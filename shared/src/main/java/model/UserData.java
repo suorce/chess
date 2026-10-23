@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 
 public record UserData(String username, String password, String email) {
 
-    public LoginData loginData() {
-        return new LoginData(username, password);
+    public LoginRequest loginData() {
+        return new LoginRequest(username, password);
     }
 
     public String toString() {

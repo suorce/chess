@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import model.*;
@@ -8,7 +9,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Service {
-
+    private int gameID = 1;
     private final DataAccess dataAccess;
 
     public Service(DataAccess dataAccess) {
@@ -21,6 +22,7 @@ public class Service {
 
     public AuthData createUser(UserData userData) throws DataAccessException {
         String username = userData.username();
+
         if (getUser(username) != null) {
             throw new DataAccessException("username already taken");
         }
@@ -28,28 +30,26 @@ public class Service {
         return createAuth(username);
     }
 
-    public AuthData loginUser(LoginData loginData) throws DataAccessException {
-        String username = loginData.username();
-        String password = loginData.password();
-
+    public AuthData loginUser(LoginRequest loginRequest) throws DataAccessException {
+        String username = loginRequest.username();
+        String password = loginRequest.password();
         UserData userData = getUser(username);
+
         if (userData == null) {
             throw new DataAccessException("unauthorized");
         } else if (!Objects.equals(userData.password(), password)) {
             throw new DataAccessException("unauthorized");
-        } else {
-            return createAuth(username);
         }
+
+        return createAuth(username);
     }
 
     public void logoutUser(String authToken) throws DataAccessException {
         AuthData authData = getAuth(authToken);
-
         if (authData == null) {
             throw new DataAccessException("unauthorized");
-        } else {
-            deleteAuth(authToken);
         }
+        deleteAuth(authToken);
     }
 
     public UserData getUser(String username) throws DataAccessException {
@@ -74,5 +74,14 @@ public class Service {
 
     private static String generateToken() {
         return UUID.randomUUID().toString();
+    }
+
+    public GameData createGame(String authToken, String gameName) throws DataAccessException {
+        AuthData authData = getAuth(authToken);
+        if (authData == null) {
+            throw new DataAccessException("unauthorized");
+        }
+        GameData gameData = new GameData(gameID++, "", "", gameName, new ChessGame());
+        return dataAccess.createGame(gameData);
     }
 }
