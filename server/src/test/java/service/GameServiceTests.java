@@ -8,17 +8,22 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GameServiceTests {
     private DataAccess dataAccess;
-    private UserService gameService;
+    private GameService gameService;
     private AuthService authService;
 
     @BeforeEach
     void setUp() throws DataAccessException {
         dataAccess = new MemoryDataAccess();
         authService = new AuthService(dataAccess);
-        gameService = new UserService(dataAccess, authService);
+        gameService = new GameService(dataAccess, authService);
 
         dataAccess.createUser(new UserData("alice", "password123", "alice@email.com"));
         dataAccess.createAuth(new AuthData("alice", "alice-token"));
@@ -34,5 +39,19 @@ public class GameServiceTests {
 
         dataAccess.createGame(new GameData(1, "alice", "bob", "game1", new ChessGame()));
         dataAccess.createGame(new GameData(2, "eve", null, "game2", new ChessGame()));
+    }
+
+    @Test
+    @Order(1)
+    @DisplayName("Get Game")
+    public void getGameValid() throws DataAccessException {
+        assertEquals(new GameData(1, "alice", "bob", "game1", new ChessGame()), gameService.getGame(1));
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("Get nonexistent game")
+    public void getGameGameIDInvalid() throws DataAccessException {
+        assertNull(gameService.getGame(3));
     }
 }
