@@ -27,7 +27,8 @@ public class Server {
                 .delete("/session", this::logout)
                 .get("/game", this::listGames)
                 .post("/game", this::createGame)
-                .put("/game", this::joinGame);
+                .put("/game", this::joinGame)
+                .exception(DataAccessException.class, this::exceptionHandler);
     }
 
     public int run(int desiredPort) {
@@ -37,6 +38,11 @@ public class Server {
 
     public void stop() {
         javalin.stop();
+    }
+
+    private void exceptionHandler(DataAccessException e, Context ctx) {
+        ctx.status(e.toHttpStatusCode());
+        ctx.result(e.toString());
     }
 
     private void delete(@NotNull Context ctx) throws DataAccessException {
