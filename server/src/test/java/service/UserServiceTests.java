@@ -73,5 +73,22 @@ public class UserServiceTests {
         assertEquals(DataAccessException.Code.AlreadyTaken, e.code());
     }
 
+    @Test
+    @Order(5)
+    @DisplayName("Login existing User and return Auth")
+    public void loginValid() throws DataAccessException {
+        AuthData authData = userService.loginUser(new LoginRequest("alice", "password123"));
+        AuthData authData2 = authService.getAuth(authData.authToken());
+        assertEquals(authData, authData2);
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("Login with incorrect password")
+    public void loginIncorrectPassword() throws DataAccessException {
+        DataAccessException e = assertThrows(DataAccessException.class, () -> userService.loginUser(new LoginRequest("alice", "bad-guess")));
+        assertEquals(DataAccessException.Code.Unauthorized, e.code());
+    }
+
 
 }
