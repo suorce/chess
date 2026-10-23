@@ -40,4 +40,10 @@ public class MemoryDataAccess implements DataAccess {
         auth.remove(authToken);
     }
 
+    public GameData createGame(GameData gameData) {
+        int gameID = gameData.gameID();
+        games.put(gameID, gameData);
+        return gameData;
+    }
+
 }

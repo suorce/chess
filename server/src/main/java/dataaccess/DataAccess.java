@@ -9,8 +9,8 @@ public interface DataAccess {
     UserData createUser(UserData userData) throws DataAccessException;
 
     UserData getUser(String username) throws DataAccessException;
-//
-//    GameData createGame() throws DataAccessException;
+
+    GameData createGame(GameData gameData) throws DataAccessException;
 //
 //    GameData getGame() throws DataAccessException;
 //
