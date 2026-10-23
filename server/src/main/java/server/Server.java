@@ -26,8 +26,8 @@ public class Server {
                 .post("/session", this::login)
                 .delete("/session", this::logout)
                 .get("/game", this::listGames)
-                .post("/game", this::createGame);
-//                .put("/game", this::joinGame)
+                .post("/game", this::createGame)
+                .put("/game", this::joinGame);
     }
 
     public int run(int desiredPort) {
@@ -73,6 +73,13 @@ public class Server {
         CreateGameRequest createGameRequest = new Gson().fromJson(ctx.body(), CreateGameRequest.class);
         GameData gameData = service.createGame(authToken, createGameRequest.gameName());
         ctx.result(gameData.gameIDJson());
+    }
+
+    private void joinGame(@NotNull Context ctx) throws DataAccessException {
+        String authToken = ctx.header("Authorization");
+        JoinGameRequest joinGameRequest = new Gson().fromJson(ctx.body(), JoinGameRequest.class);
+        GameData gameData = service.updateGame(authToken, joinGameRequest);
+        ctx.status(200);
     }
 
 
