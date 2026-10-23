@@ -6,6 +6,11 @@ import com.google.gson.Gson;
 import java.util.Map;
 
 public record GameData(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {
+
+    public GameListItem toListItem() {
+        return new GameListItem(gameID, whiteUsername, blackUsername, gameName);
+    }
+
     public String toString() {
         return new Gson().toJson(this);
     }

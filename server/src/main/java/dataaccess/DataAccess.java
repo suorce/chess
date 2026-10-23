@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.*;
+import java.util.List;
 
 public interface DataAccess {
 
@@ -14,7 +15,7 @@ public interface DataAccess {
 //
 //    GameData getGame() throws DataAccessException;
 //
-    ListGamesResponse listGames() throws DataAccessException;
+    List<GameData> listGames() throws DataAccessException;
 //
 //    void updateGame() throws DataAccessException;
 //

@@ -5,6 +5,8 @@ import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import model.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -81,7 +83,12 @@ public class Service {
         if (authData == null) {
             throw new DataAccessException("unauthorized");
         }
-        return dataAccess.listGames();
+        List<GameData> games = dataAccess.listGames();
+        List<GameListItem> gamesList = new ArrayList<>();
+        for (GameData game : games) {
+            gamesList.add(game.toListItem());
+        }
+        return new ListGamesResponse(gamesList);
     }
 
     public GameData createGame(String authToken, String gameName) throws DataAccessException {
