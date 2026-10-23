@@ -7,7 +7,6 @@ import model.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 public class Service {
@@ -69,9 +68,7 @@ public class Service {
     public void deleteAuth(String authToken) throws DataAccessException {
         dataAccess.deleteAuth(authToken);
     }
-
-
-
+    
     private static String generateToken() {
         return UUID.randomUUID().toString();
     }
@@ -102,6 +99,10 @@ public class Service {
         String playerName = authData.username();
         String playerColor = joinGameRequest.playerColor();
         int gameID = joinGameRequest.gameID();
+
+        if ((!"WHITE".equals(playerColor) && !"BLACK".equals(playerColor)) || getGame(gameID) == null) {
+            throw new DataAccessException(DataAccessException.Code.BadRequest);
+        }
 
         GameData game = getGame(gameID);
         if ("WHITE".equals(playerColor) && game.whiteUsername() == null) {
