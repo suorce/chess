@@ -4,13 +4,14 @@ import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
-import model.AuthData;
-import model.GameData;
-import model.UserData;
+import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,5 +54,23 @@ public class GameServiceTests {
     @DisplayName("Get nonexistent game")
     public void getGameGameIDInvalid() throws DataAccessException {
         assertNull(gameService.getGame(3));
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("List Games")
+    public void listGamesValid() throws DataAccessException {
+        List<GameListItem> gamesList = new ArrayList<GameListItem>();
+        gamesList.add(new GameListItem(1, "alice", "bob", "game1"));
+        gamesList.add(new GameListItem(2, "eve", null, "game2"));
+        assertEquals(new ListGamesResponse(gamesList), gameService.listGames("alice-token"));
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("List Games Unauthorized")
+    public void listGamesUnauthorized() throws DataAccessException {
+        DataAccessException e = assertThrows(DataAccessException.class, () -> gameService.listGames("john-token"));
+        assertEquals(DataAccessException.Code.Unauthorized, e.code());
     }
 }
