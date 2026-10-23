@@ -11,22 +11,36 @@ import java.util.Map;
 public class DataAccessException extends Exception{
 
     public enum Code {
-        BadRequest,
-        AlreadyTaken,
-        Unauthorized,
-        ServerError,
+        BadRequest("Error: bad request"),
+        AlreadyTaken("Error: already taken"),
+        Unauthorized("Error: unauthorized"),
+        ServerError("Error: server error");
+
+        private final String message;
+
+        Code(String message) {
+            this.message = message;
+        }
+
+        public String message() {
+            return message;
+        }
     }
 
     final private Code code;
 
-    public DataAccessException(Code code, String message) {
-        super(message);
+    public DataAccessException(Code code) {
+        super(code.message());
         this.code = code;
     }
 
-//    public DataAccessException(String message, Throwable ex) {
-//        super(message, ex);
-//    }
+    public Code code() {
+        return code;
+    }
+
+    public String message() {
+        return code.message();
+    }
 
     public String toJson() {
         return new Gson().toJson(Map.of("message", getMessage(), "status", code));
@@ -36,11 +50,7 @@ public class DataAccessException extends Exception{
         var map = new Gson().fromJson(json, HashMap.class);
         var status = Code.valueOf(map.get("status").toString());
         String message = map.get("message").toString();
-        return new DataAccessException(status, message);
-    }
-
-    public Code code() {
-        return code;
+        return new DataAccessException(status);
     }
 
     public static Code fromHttpStatusCode(int httpStatusCode) {
