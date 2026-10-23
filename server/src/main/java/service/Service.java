@@ -76,6 +76,14 @@ public class Service {
         return UUID.randomUUID().toString();
     }
 
+    public ListGamesResponse listGames(String authToken) throws DataAccessException {
+        AuthData authData = getAuth(authToken);
+        if (authData == null) {
+            throw new DataAccessException("unauthorized");
+        }
+        return dataAccess.listGames();
+    }
+
     public GameData createGame(String authToken, String gameName) throws DataAccessException {
         AuthData authData = getAuth(authToken);
         if (authData == null) {
