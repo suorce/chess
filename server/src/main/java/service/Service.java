@@ -12,9 +12,11 @@ import java.util.UUID;
 public class Service {
     private int gameID = 1;
     private final DataAccess dataAccess;
+    private final UserService userService;
 
     public Service(DataAccess dataAccess) {
         this.dataAccess = dataAccess;
+        this.userService = new UserService(dataAccess);
     }
 
     public void clear() throws DataAccessException {
@@ -22,55 +24,31 @@ public class Service {
     }
 
     public AuthData createUser(UserData userData) throws DataAccessException {
-        String username = userData.username();
-
-        if (getUser(username) != null) {
-            throw new DataAccessException(DataAccessException.Code.AlreadyTaken);
-        }
-        dataAccess.createUser(userData);
-        return createAuth(username);
+        return userService.createUser(userData);
     }
 
     public AuthData loginUser(LoginRequest loginRequest) throws DataAccessException {
-        String username = loginRequest.username();
-        String password = loginRequest.password();
-        UserData userData = getUser(username);
-
-        if (userData == null || !userData.password().equals(password)) {
-            throw new DataAccessException(DataAccessException.Code.Unauthorized);
-        }
-
-        return createAuth(username);
+        return userService.loginUser(loginRequest);
     }
 
     public void logoutUser(String authToken) throws DataAccessException {
-        AuthData authData = getAuth(authToken);
-        if (authData == null) {
-            throw new DataAccessException(DataAccessException.Code.Unauthorized);
-        }
-        deleteAuth(authToken);
+        userService.logoutUser(authToken);
     }
 
     public UserData getUser(String username) throws DataAccessException {
-        return dataAccess.getUser(username);
+        return userService.getUser(username);
     }
 
     public AuthData createAuth(String username) throws DataAccessException {
-        String authToken = generateToken();
-        AuthData authData = new AuthData(username, authToken);
-        return dataAccess.createAuth(authData);
+        return userService.createAuth(username);
     }
 
     public AuthData getAuth(String authToken) throws DataAccessException {
-        return dataAccess.getAuth(authToken);
+        return userService.getAuth(authToken);
     }
 
     public void deleteAuth(String authToken) throws DataAccessException {
-        dataAccess.deleteAuth(authToken);
-    }
-    
-    private static String generateToken() {
-        return UUID.randomUUID().toString();
+        userService.deleteAuth(authToken);
     }
 
     public GameData getGame(int gameID) throws DataAccessException {
