@@ -24,6 +24,7 @@ public class AuthService {
     }
 
     public void deleteAuth(String authToken) throws DataAccessException {
+        requireAuth(authToken);
         dataAccess.deleteAuth(authToken);
     }
 

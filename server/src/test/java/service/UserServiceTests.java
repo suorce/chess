@@ -61,12 +61,12 @@ public class UserServiceTests {
     @DisplayName("Register User & return Auth")
     public void registerValid() throws DataAccessException {
         AuthData authData = userService.createUser(new UserData("gurt", "passwordGURT", "gurt@email.com"));
-        AuthData authData2 = dataAccess.getAuth(authData.authToken());
+        AuthData authData2 = authService.getAuth(authData.authToken());
         assertEquals(authData, authData2);
     }
 
     @Test
-    @Order(4
+    @Order(4)
     @DisplayName("Register taken username")
     public void registerTakenUser() throws DataAccessException {
         DataAccessException e = assertThrows(DataAccessException.class, () -> userService.createUser(new UserData("alice", "password123", "alice@email.com")));
@@ -90,5 +90,20 @@ public class UserServiceTests {
         assertEquals(DataAccessException.Code.Unauthorized, e.code());
     }
 
+    @Test
+    @Order(7)
+    @DisplayName("Logout user")
+    public void logoutUser() throws DataAccessException {
+        authService.deleteAuth("alice-token");
+        assertNull(authService.getAuth("alice-token"));
+    }
+
+    @Test
+    @Order(8)
+    @DisplayName("Logout with fake token")
+    public void logoutFakeToken() throws DataAccessException {
+        DataAccessException e = assertThrows(DataAccessException.class, () -> authService.deleteAuth("john-token"));
+        assertEquals(DataAccessException.Code.Unauthorized, e.code());
+    }
 
 }
