@@ -24,9 +24,9 @@ public class Server {
                 .delete("/db", this::delete)
                 .post("/user", this::register)
                 .post("/session", this::login)
-                .delete("/session", this::logout);
+                .delete("/session", this::logout)
 //                .get("/game", this::listGames)
-//                .post("/game", this::createGame)
+                .post("/game", this::createGame);
 //                .put("/game", this::joinGame)
     }
 
@@ -51,14 +51,24 @@ public class Server {
     }
 
     private void login(@NotNull Context ctx) throws DataAccessException {
-        LoginData loginData = new Gson().fromJson(ctx.body(), LoginData.class);
-        AuthData authData = service.loginUser(loginData);
+        LoginRequest loginRequest = new Gson().fromJson(ctx.body(), LoginRequest.class);
+        AuthData authData = service.loginUser(loginRequest);
         ctx.result(authData.toString());
     }
 
     private void logout(@NotNull Context ctx) throws DataAccessException {
         String authToken = ctx.header("Authorization");
         service.logoutUser(authToken);
+        ctx.status(200);
     }
+
+
+    private void createGame(@NotNull Context ctx) throws DataAccessException {
+        String authToken = ctx.header("Authorization");
+        CreateGameRequest createGameRequest = new Gson().fromJson(ctx.body(), CreateGameRequest.class);
+        GameData gameData = service.createGame(authToken, createGameRequest.gameName());
+        ctx.result(gameData.gameIDJson());
+    }
+
 
 }
