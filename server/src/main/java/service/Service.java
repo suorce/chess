@@ -106,9 +106,9 @@ public class Service {
         int gameID = joinGameRequest.gameID();
 
         GameData game = getGame(gameID);
-        if ("WHITE".equals(playerColor) && game.whiteUsername().isEmpty()) {
+        if ("WHITE".equals(playerColor) && game.whiteUsername() == null) {
             return dataAccess.updateGame(playerName, playerColor, gameID);
-        } else if ("BLACK".equals(playerColor) && game.blackUsername().isEmpty()) {
+        } else if ("BLACK".equals(playerColor) && game.blackUsername() == null) {
             return dataAccess.updateGame(playerName, playerColor, gameID);
         } else {
             throw new DataAccessException("already taken");
@@ -120,7 +120,7 @@ public class Service {
         if (authData == null) {
             throw new DataAccessException("unauthorized");
         }
-        GameData gameData = new GameData(gameID++, "", "", gameName, new ChessGame());
+        GameData gameData = new GameData(gameID++, null, null, gameName, new ChessGame());
         return dataAccess.createGame(gameData);
     }
 }
