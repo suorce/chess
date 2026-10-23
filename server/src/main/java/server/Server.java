@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
 import io.javalin.*;
@@ -8,6 +9,8 @@ import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
 import service.Service;
 import model.*;
+
+import java.lang.reflect.Field;
 
 public class Server {
 
@@ -50,14 +53,16 @@ public class Server {
         ctx.status(200);
     }
 
-    private void register(@NotNull Context ctx) throws DataAccessException {
+    private void register(@NotNull Context ctx) throws DataAccessException, IllegalAccessException {
         UserData userData = new Gson().fromJson(ctx.body(), UserData.class);
+        jsonToObjectCheck(userData);
         AuthData authData = service.createUser(userData);
         ctx.result(authData.toString());
     }
 
-    private void login(@NotNull Context ctx) throws DataAccessException {
+    private void login(@NotNull Context ctx) throws DataAccessException, IllegalAccessException {
         LoginRequest loginRequest = new Gson().fromJson(ctx.body(), LoginRequest.class);
+        jsonToObjectCheck(loginRequest);
         AuthData authData = service.loginUser(loginRequest);
         ctx.result(authData.toString());
     }
@@ -74,18 +79,37 @@ public class Server {
         ctx.result(listGamesResponse.toString());
     }
 
-    private void createGame(@NotNull Context ctx) throws DataAccessException {
+    private void createGame(@NotNull Context ctx) throws DataAccessException, IllegalAccessException {
         String authToken = ctx.header("Authorization");
         CreateGameRequest createGameRequest = new Gson().fromJson(ctx.body(), CreateGameRequest.class);
+        jsonToObjectCheck(createGameRequest);
         GameData gameData = service.createGame(authToken, createGameRequest.gameName());
         ctx.result(gameData.gameIDJson());
     }
 
-    private void joinGame(@NotNull Context ctx) throws DataAccessException {
+    private void joinGame(@NotNull Context ctx) throws DataAccessException, IllegalAccessException {
         String authToken = ctx.header("Authorization");
         JoinGameRequest joinGameRequest = new Gson().fromJson(ctx.body(), JoinGameRequest.class);
+        jsonToObjectCheck(joinGameRequest);
         GameData gameData = service.updateGame(authToken, joinGameRequest);
         ctx.status(200);
+    }
+
+    private void jsonToObjectCheck(Object requestObject) throws DataAccessException, IllegalAccessException {
+        Class<?> clazz = requestObject.getClass();
+        try {
+            Field[] fields = clazz.getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                if (field.get(requestObject) == null) {
+                    throw new DataAccessException(DataAccessException.Code.BadRequest);
+                }
+            }
+        } catch (JsonParseException e) {
+            throw new DataAccessException(DataAccessException.Code.BadRequest);
+        } catch (IllegalAccessException e) {
+            throw new IllegalAccessException("cant access class fields");
+        }
     }
 
 
