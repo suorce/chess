@@ -216,7 +216,7 @@
         4. equals(): A method that compares two records based on their field values.
         5. hashCode(): A method that calculates a hash based on all fields.
         6. toString(): A string representation showing all field names and their values.
-    - can add custom methods to a record, useful to provide logic related to the data
+    - can add custom methods to a record inside `{}`, useful to provide logic related to the data
         ```java
         public record PetRecord(int id, String name, String type) {
             /**
