@@ -19,9 +19,9 @@ public interface DataAccess {
 //    void updateGame() throws DataAccessException;
 //
     AuthData createAuth(AuthData authData) throws DataAccessException;
-//
-//    AuthData getAuth() throws DataAccessException;
-//
-//    void deleteAuth() throws DataAccessException;
+
+    AuthData getAuth(String authToken) throws DataAccessException;
+
+    void deleteAuth(String authToken) throws DataAccessException;
 
 }

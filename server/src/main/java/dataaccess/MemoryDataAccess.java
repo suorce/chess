@@ -16,24 +16,28 @@ public class MemoryDataAccess implements DataAccess {
         games.clear();
     }
 
-    public UserData createUser(UserData userData) throws DataAccessException {
+    public UserData createUser(UserData userData) {
         String username = userData.username();
         users.put(username, userData);
         return userData;
     }
 
-    public UserData getUser(String username) throws DataAccessException {
-        if (!users.containsKey(username)) {
-            return null;
-        } else {
+    public UserData getUser(String username) {
             return users.get(username);
-        }
     }
 
-    public AuthData createAuth(AuthData authData) throws DataAccessException {
+    public AuthData createAuth(AuthData authData) {
         String authToken = authData.authToken();
         auth.put(authToken, authData);
         return authData;
+    }
+
+    public AuthData getAuth(String authToken) {
+            return auth.get(authToken);
+    }
+
+    public void deleteAuth(String authToken) {
+        auth.remove(authToken);
     }
 
 }
