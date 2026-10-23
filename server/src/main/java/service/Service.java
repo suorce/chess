@@ -78,6 +78,10 @@ public class Service {
         return UUID.randomUUID().toString();
     }
 
+    public GameData getGame(int gameID) throws DataAccessException {
+        return dataAccess.getGame(gameID);
+    }
+
     public ListGamesResponse listGames(String authToken) throws DataAccessException {
         AuthData authData = getAuth(authToken);
         if (authData == null) {

@@ -41,6 +41,10 @@ public class MemoryDataAccess implements DataAccess {
         auth.remove(authToken);
     }
 
+    public GameData getGame(int gameID) {
+        return games.get(gameID);
+    }
+
     public ArrayList<GameData> listGames() {
         return new ArrayList<>(games.values());
     }

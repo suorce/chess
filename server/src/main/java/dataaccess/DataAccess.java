@@ -12,9 +12,9 @@ public interface DataAccess {
     UserData getUser(String username) throws DataAccessException;
 
     GameData createGame(GameData gameData) throws DataAccessException;
-//
-//    GameData getGame() throws DataAccessException;
-//
+
+    GameData getGame(int gameID) throws DataAccessException;
+
     List<GameData> listGames() throws DataAccessException;
 //
 //    void updateGame() throws DataAccessException;
