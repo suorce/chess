@@ -26,7 +26,7 @@ public class Service {
         String username = userData.username();
 
         if (getUser(username) != null) {
-            throw new DataAccessException("username already taken");
+            throw new DataAccessException(DataAccessException.Code.AlreadyTaken, "username already taken");
         }
         dataAccess.createUser(userData);
         return createAuth(username);
@@ -37,10 +37,8 @@ public class Service {
         String password = loginRequest.password();
         UserData userData = getUser(username);
 
-        if (userData == null) {
-            throw new DataAccessException("unauthorized");
-        } else if (!Objects.equals(userData.password(), password)) {
-            throw new DataAccessException("unauthorized");
+        if (userData == null || !userData.password().equals(password)) {
+            throw new DataAccessException(DataAccessException.Code.Unauthorized, "unauthorized");
         }
 
         return createAuth(username);
@@ -49,7 +47,7 @@ public class Service {
     public void logoutUser(String authToken) throws DataAccessException {
         AuthData authData = getAuth(authToken);
         if (authData == null) {
-            throw new DataAccessException("unauthorized");
+            throw new DataAccessException(DataAccessException.Code.Unauthorized, "unauthorized");
         }
         deleteAuth(authToken);
     }
@@ -85,7 +83,7 @@ public class Service {
     public ListGamesResponse listGames(String authToken) throws DataAccessException {
         AuthData authData = getAuth(authToken);
         if (authData == null) {
-            throw new DataAccessException("unauthorized");
+            throw new DataAccessException(DataAccessException.Code.Unauthorized, "unauthorized");
         }
         List<GameData> games = dataAccess.listGames();
         List<GameListItem> gamesList = new ArrayList<>();
@@ -98,7 +96,7 @@ public class Service {
     public GameData updateGame(String authToken, JoinGameRequest joinGameRequest) throws DataAccessException {
         AuthData authData = getAuth(authToken);
         if (authData == null) {
-            throw new DataAccessException("unauthorized");
+            throw new DataAccessException(DataAccessException.Code.Unauthorized, "unauthorized");
         }
 
         String playerName = authData.username();
@@ -111,14 +109,14 @@ public class Service {
         } else if ("BLACK".equals(playerColor) && game.blackUsername() == null) {
             return dataAccess.updateGame(playerName, playerColor, gameID);
         } else {
-            throw new DataAccessException("already taken");
+            throw new DataAccessException(DataAccessException.Code.AlreadyTaken, "already taken");
         }
     }
 
     public GameData createGame(String authToken, String gameName) throws DataAccessException {
         AuthData authData = getAuth(authToken);
         if (authData == null) {
-            throw new DataAccessException("unauthorized");
+            throw new DataAccessException(DataAccessException.Code.Unauthorized, "unauthorized");
         }
         GameData gameData = new GameData(gameID++, null, null, gameName, new ChessGame());
         return dataAccess.createGame(gameData);
