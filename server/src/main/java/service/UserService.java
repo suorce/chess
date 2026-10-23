@@ -11,9 +11,11 @@ import java.util.UUID;
 public class UserService {
 
     private final DataAccess dataAccess;
+    private final AuthService authService;
 
-    public UserService(DataAccess dataAccess) {
+    public UserService(DataAccess dataAccess, AuthService authService) {
         this.dataAccess = dataAccess;
+        this.authService = authService;
     }
 
     public AuthData createUser(UserData userData) throws DataAccessException {
@@ -23,7 +25,7 @@ public class UserService {
             throw new DataAccessException(DataAccessException.Code.AlreadyTaken);
         }
         dataAccess.createUser(userData);
-        return createAuth(username);
+        return authService.createAuth(username);
     }
 
     public AuthData loginUser(LoginRequest loginRequest) throws DataAccessException {
@@ -35,37 +37,19 @@ public class UserService {
             throw new DataAccessException(DataAccessException.Code.Unauthorized);
         }
 
-        return createAuth(username);
+        return authService.createAuth(username);
     }
 
     public void logoutUser(String authToken) throws DataAccessException {
-        AuthData authData = getAuth(authToken);
+        AuthData authData = authService.getAuth(authToken);
         if (authData == null) {
             throw new DataAccessException(DataAccessException.Code.Unauthorized);
         }
-        deleteAuth(authToken);
+        authService.deleteAuth(authToken);
     }
 
     public UserData getUser(String username) throws DataAccessException {
         return dataAccess.getUser(username);
-    }
-
-    public AuthData createAuth(String username) throws DataAccessException {
-        String authToken = generateToken();
-        AuthData authData = new AuthData(username, authToken);
-        return dataAccess.createAuth(authData);
-    }
-
-    public AuthData getAuth(String authToken) throws DataAccessException {
-        return dataAccess.getAuth(authToken);
-    }
-
-    public void deleteAuth(String authToken) throws DataAccessException {
-        dataAccess.deleteAuth(authToken);
-    }
-
-    private static String generateToken() {
-        return UUID.randomUUID().toString();
     }
 
 }
