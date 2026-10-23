@@ -6,8 +6,14 @@ import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
 import model.AuthData;
 import model.GameData;
+import model.LoginRequest;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTests {
     private DataAccess dataAccess;
@@ -20,10 +26,10 @@ public class UserServiceTests {
         authService = new AuthService(dataAccess);
         userService = new UserService(dataAccess, authService);
 
-        dataAccess.createUser(new UserData("alice", "password123", "bob@email.com"));
+        dataAccess.createUser(new UserData("alice", "password123", "alice@email.com"));
         dataAccess.createAuth(new AuthData("alice", "alice-token"));
 
-        dataAccess.createUser(new UserData("bob", "password456", "alice@email.com"));
+        dataAccess.createUser(new UserData("bob", "password456", "bob@email.com"));
         dataAccess.createAuth(new AuthData("bob", "bob-token"));
 
         dataAccess.createUser(new UserData("eve", "password789", "eve@email.com"));
@@ -35,4 +41,20 @@ public class UserServiceTests {
         dataAccess.createGame(new GameData(1, "alice", "bob", "game1", new ChessGame()));
         dataAccess.createGame(new GameData(2, "eve", null, "game2", new ChessGame()));
     }
+
+    @Test
+    @Order(1)
+    @DisplayName("Get User")
+    public void getUserValid() throws DataAccessException {
+        assertEquals(new UserData("alice", "password123", "alice@email.com"), userService.getUser("alice"));
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("Get Non-existent User")
+    public void getNonexistentUser() throws DataAccessException {
+        assertNull(userService.getUser("john"));
+    }
+
+
 }

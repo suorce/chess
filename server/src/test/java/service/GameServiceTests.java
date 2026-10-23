@@ -20,10 +20,10 @@ public class GameServiceTests {
         authService = new AuthService(dataAccess);
         gameService = new UserService(dataAccess, authService);
 
-        dataAccess.createUser(new UserData("alice", "password123", "bob@email.com"));
+        dataAccess.createUser(new UserData("alice", "password123", "alice@email.com"));
         dataAccess.createAuth(new AuthData("alice", "alice-token"));
 
-        dataAccess.createUser(new UserData("bob", "password456", "alice@email.com"));
+        dataAccess.createUser(new UserData("bob", "password456", "bob@email.com"));
         dataAccess.createAuth(new AuthData("bob", "bob-token"));
 
         dataAccess.createUser(new UserData("eve", "password789", "eve@email.com"));
