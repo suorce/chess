@@ -41,10 +41,7 @@ public class UserService {
     }
 
     public void logoutUser(String authToken) throws DataAccessException {
-        AuthData authData = authService.getAuth(authToken);
-        if (authData == null) {
-            throw new DataAccessException(DataAccessException.Code.Unauthorized);
-        }
+        authService.requireAuth(authToken);
         authService.deleteAuth(authToken);
     }
 

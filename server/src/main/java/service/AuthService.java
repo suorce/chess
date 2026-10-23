@@ -27,6 +27,14 @@ public class AuthService {
         dataAccess.deleteAuth(authToken);
     }
 
+    public AuthData requireAuth(String authToken) throws DataAccessException {
+        AuthData authData = getAuth(authToken);
+        if (authData == null) {
+            throw new DataAccessException(DataAccessException.Code.Unauthorized);
+        }
+        return authData;
+    }
+
     private static String generateToken() {
         return UUID.randomUUID().toString();
     }

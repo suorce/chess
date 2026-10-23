@@ -38,26 +38,6 @@ public class Service {
         userService.logoutUser(authToken);
     }
 
-    public UserData getUser(String username) throws DataAccessException {
-        return userService.getUser(username);
-    }
-
-    public AuthData createAuth(String username) throws DataAccessException {
-        return authService.createAuth(username);
-    }
-
-    public AuthData getAuth(String authToken) throws DataAccessException {
-        return authService.getAuth(authToken);
-    }
-
-    public void deleteAuth(String authToken) throws DataAccessException {
-        authService.deleteAuth(authToken);
-    }
-
-    public GameData getGame(int gameID) throws DataAccessException {
-        return dataAccess.getGame(gameID);
-    }
-
     public ListGamesResponse listGames(String authToken) throws DataAccessException {
         return gameService.listGames(authToken);
     }

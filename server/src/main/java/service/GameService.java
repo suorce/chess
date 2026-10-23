@@ -23,10 +23,7 @@ public class GameService {
     }
 
     public ListGamesResponse listGames(String authToken) throws DataAccessException {
-        AuthData authData = authService.getAuth(authToken);
-        if (authData == null) {
-            throw new DataAccessException(DataAccessException.Code.Unauthorized);
-        }
+        authService.requireAuth(authToken);
         List<GameData> games = dataAccess.listGames();
         List<GameListItem> gamesList = new ArrayList<>();
         for (GameData game : games) {
@@ -36,10 +33,7 @@ public class GameService {
     }
 
     public GameData updateGame(String authToken, JoinGameRequest joinGameRequest) throws DataAccessException {
-        AuthData authData = authService.getAuth(authToken);
-        if (authData == null) {
-            throw new DataAccessException(DataAccessException.Code.Unauthorized);
-        }
+        AuthData authData = authService.requireAuth(authToken);
 
         String playerName = authData.username();
         String playerColor = joinGameRequest.playerColor();
@@ -60,10 +54,7 @@ public class GameService {
     }
 
     public GameData createGame(String authToken, String gameName) throws DataAccessException {
-        AuthData authData = authService.getAuth(authToken);
-        if (authData == null) {
-            throw new DataAccessException(DataAccessException.Code.Unauthorized);
-        }
+        authService.requireAuth(authToken);
         GameData gameData = new GameData(gameID++, null, null, gameName, new ChessGame());
         return dataAccess.createGame(gameData);
     }
