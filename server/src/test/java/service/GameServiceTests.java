@@ -73,4 +73,41 @@ public class GameServiceTests {
         DataAccessException e = assertThrows(DataAccessException.class, () -> gameService.listGames("john-token"));
         assertEquals(DataAccessException.Code.Unauthorized, e.code());
     }
+
+    @Test
+    @Order(5)
+    @DisplayName("Update Game")
+    public void updateGameValid() throws DataAccessException {
+        JoinGameRequest joinGameRequest = new JoinGameRequest("BLACK", 2);
+        GameData gameData = gameService.updateGame("ferb-token", joinGameRequest);
+
+        assertEquals(new GameData(2, "eve", "ferb", "game2", new ChessGame()), gameService.getGame(2));
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("Update Game Already Taken")
+    public void updateGameColorTaken() throws DataAccessException {
+        JoinGameRequest joinGameRequest = new JoinGameRequest("BLACK", 1);
+        DataAccessException e = assertThrows(DataAccessException.class, () -> gameService.updateGame("ferb-token", joinGameRequest));
+        assertEquals(DataAccessException.Code.AlreadyTaken, e.code());
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("Update Nonexistent Game")
+    public void updateNonexistantGame() throws DataAccessException {
+        JoinGameRequest joinGameRequest = new JoinGameRequest("BLACK", 3);
+        DataAccessException e = assertThrows(DataAccessException.class, () -> gameService.updateGame("ferb-token", joinGameRequest));
+        assertEquals(DataAccessException.Code.BadRequest, e.code());
+    }
+
+    @Test
+    @Order(8)
+    @DisplayName("Update Nonexistent Game")
+    public void updateGameNonexistentColor() throws DataAccessException {
+        JoinGameRequest joinGameRequest = new JoinGameRequest("GREEN", 3);
+        DataAccessException e = assertThrows(DataAccessException.class, () -> gameService.updateGame("ferb-token", joinGameRequest));
+        assertEquals(DataAccessException.Code.BadRequest, e.code());
+    }
 }
