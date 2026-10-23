@@ -3,6 +3,7 @@ package dataaccess;
 import model.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class MemoryDataAccess implements DataAccess {
     final private HashMap<String, UserData> users = new HashMap<>();
@@ -38,6 +39,10 @@ public class MemoryDataAccess implements DataAccess {
 
     public void deleteAuth(String authToken) {
         auth.remove(authToken);
+    }
+
+    public ListGamesResponse listGames() {
+        return new ListGamesResponse(Map.of("games", games.values()));
     }
 
     public GameData createGame(GameData gameData) {

@@ -14,7 +14,7 @@ public interface DataAccess {
 //
 //    GameData getGame() throws DataAccessException;
 //
-//    void listGames() throws DataAccessException;
+    ListGamesResponse listGames() throws DataAccessException;
 //
 //    void updateGame() throws DataAccessException;
 //
