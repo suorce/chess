@@ -77,7 +77,10 @@ public class ChessBoard {
             squares[6][col] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
         }
 
-        ChessPiece.PieceType[] backrank = {ChessPiece.PieceType.ROOK, ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.KING, ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.ROOK};
+        ChessPiece.PieceType[] backrank = {ChessPiece.PieceType.ROOK, ChessPiece.PieceType.KNIGHT,
+                                            ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.QUEEN,
+                                            ChessPiece.PieceType.KING, ChessPiece.PieceType.BISHOP,
+                                            ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.ROOK};
         for (int col = 0; col < 8; col++) {
             squares[0][col] = new ChessPiece(ChessGame.TeamColor.WHITE, backrank[col]);
             squares[7][col] = new ChessPiece(ChessGame.TeamColor.BLACK, backrank[col]);

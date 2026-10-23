@@ -46,23 +46,6 @@ public class DataAccessException extends Exception{
         return new Gson().toJson(Map.of("message", getMessage(), "status", code));
     }
 
-    public static DataAccessException fromJson(String json) {
-        var map = new Gson().fromJson(json, HashMap.class);
-        var status = Code.valueOf(map.get("status").toString());
-        String message = map.get("message").toString();
-        return new DataAccessException(status);
-    }
-
-    public static Code fromHttpStatusCode(int httpStatusCode) {
-        return switch (httpStatusCode) {
-            case 400 -> Code.BadRequest;
-            case 403 -> Code.AlreadyTaken;
-            case 401 -> Code.Unauthorized;
-            case 500 -> Code.ServerError;
-            default -> throw new IllegalArgumentException("Unknown HTTP status code: " + httpStatusCode);
-        };
-    }
-
     public int toHttpStatusCode() {
         return switch (code) {
             case BadRequest -> 400;
