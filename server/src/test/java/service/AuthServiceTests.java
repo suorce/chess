@@ -80,4 +80,18 @@ public class AuthServiceTests {
         assertEquals(DataAccessException.Code.Unauthorized, e.code());
     }
 
+    @Test
+    @Order(6)
+    @DisplayName("Require Auth")
+    public void requireAuthValid() throws DataAccessException {
+        assertEquals(authService.getAuth("alice-token"), authService.requireAuth("alice-token"));
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("Require Auth Unauthorized")
+    public void requireAuthUnauthorized() throws DataAccessException {
+        DataAccessException e = assertThrows(DataAccessException.class, () -> authService.requireAuth("john-token"));
+        assertEquals(DataAccessException.Code.Unauthorized, e.code());
+    }
 }
