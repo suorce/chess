@@ -64,5 +64,20 @@ public class AuthServiceTests {
         assertNull(authService.getAuth("john-token"));
     }
 
+    @Test
+    @Order(4)
+    @DisplayName("Delete Auth")
+    public void deleteAuth() throws DataAccessException {
+        authService.deleteAuth("alice-token");
+        assertNull(authService.getAuth("alice-token"));
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("Delete Auth Unauthorized")
+    public void deleteAuthInvalid() throws DataAccessException {
+        DataAccessException e = assertThrows(DataAccessException.class, () -> authService.deleteAuth("john-token"));
+        assertEquals(DataAccessException.Code.Unauthorized, e.code());
+    }
 
 }
