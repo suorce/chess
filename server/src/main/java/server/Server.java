@@ -42,7 +42,7 @@ public class Server {
 
     private void exceptionHandler(DataAccessException e, Context ctx) {
         ctx.status(e.toHttpStatusCode());
-        ctx.result(e.toString());
+        ctx.result(e.toJson());
     }
 
     private void delete(@NotNull Context ctx) throws DataAccessException {
