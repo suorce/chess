@@ -1,0 +1,28 @@
+package dataaccess;
+
+import model.*;
+import java.util.List;
+
+public interface DataAccess {
+
+    void clear() throws DataAccessException;
+
+    UserData createUser(UserData userData) throws DataAccessException;
+
+    UserData getUser(String username) throws DataAccessException;
+
+    GameData createGame(GameData gameData) throws DataAccessException;
+
+    GameData getGame(int gameID) throws DataAccessException;
+
+    List<GameData> listGames() throws DataAccessException;
+
+    GameData updateGame(String playerName, String playerColor, int gameID) throws DataAccessException;
+
+    AuthData createAuth(AuthData authData) throws DataAccessException;
+
+    AuthData getAuth(String authToken) throws DataAccessException;
+
+    void deleteAuth(String authToken) throws DataAccessException;
+
+}
