@@ -49,6 +49,12 @@ public class MemoryDataAccess implements DataAccess {
         return new ArrayList<>(games.values());
     }
 
+    public GameData updateGame(String playerName, String playerColor, int gameID) {
+        GameData game = games.get(gameID);
+        games.put(gameID, game.updateGame(playerName, playerColor));
+        return game;
+    }
+
     public GameData createGame(GameData gameData) {
         int gameID = gameData.gameID();
         games.put(gameID, gameData);
