@@ -95,6 +95,26 @@ public class Service {
         return new ListGamesResponse(gamesList);
     }
 
+    public GameData updateGame(String authToken, JoinGameRequest joinGameRequest) throws DataAccessException {
+        AuthData authData = getAuth(authToken);
+        if (authData == null) {
+            throw new DataAccessException("unauthorized");
+        }
+
+        String playerName = authData.username();
+        String playerColor = joinGameRequest.playerColor();
+        int gameID = joinGameRequest.gameID();
+
+        GameData game = getGame(gameID);
+        if ("WHITE".equals(playerColor) && game.whiteUsername().isEmpty()) {
+            return dataAccess.updateGame(playerName, playerColor, gameID);
+        } else if ("BLACK".equals(playerColor) && game.blackUsername().isEmpty()) {
+            return dataAccess.updateGame(playerName, playerColor, gameID);
+        } else {
+            throw new DataAccessException("already taken");
+        }
+    }
+
     public GameData createGame(String authToken, String gameName) throws DataAccessException {
         AuthData authData = getAuth(authToken);
         if (authData == null) {
