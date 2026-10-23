@@ -50,7 +50,7 @@ public class Server {
         ctx.result(authData.toString());
     }
 
-    private void login(@NotNull Context ctx) {
+    private void login(@NotNull Context ctx) throws DataAccessException {
         LoginData loginData = new Gson().fromJson(ctx.body(), LoginData.class);
         AuthData authData = service.loginUser(loginData);
         ctx.result(authData.toString());

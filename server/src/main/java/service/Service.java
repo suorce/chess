@@ -4,6 +4,7 @@ import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import model.*;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class Service {
@@ -25,6 +26,20 @@ public class Service {
         }
         dataAccess.createUser(userData);
         return createAuth(username);
+    }
+
+    public AuthData loginUser(LoginData loginData) throws DataAccessException {
+        String username = loginData.username();
+        String password = loginData.password();
+
+        UserData userData = getUser(username);
+        if (userData == null) {
+            throw new DataAccessException("unauthorized");
+        } else if (!Objects.equals(userData.password(), password)) {
+            throw new DataAccessException("unauthorized");
+        } else {
+            return createAuth(username);
+        }
     }
 
     public UserData getUser(String username) throws DataAccessException {
