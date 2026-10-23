@@ -40,6 +40,8 @@ public class GameServiceTests {
 
         dataAccess.createGame(new GameData(1, "alice", "bob", "game1", new ChessGame()));
         dataAccess.createGame(new GameData(2, "eve", null, "game2", new ChessGame()));
+        gameService.incrementGameIDForTesting();
+        gameService.incrementGameIDForTesting();
     }
 
     @Test
@@ -110,4 +112,20 @@ public class GameServiceTests {
         DataAccessException e = assertThrows(DataAccessException.class, () -> gameService.updateGame("ferb-token", joinGameRequest));
         assertEquals(DataAccessException.Code.BadRequest, e.code());
     }
+
+    @Test
+    @Order(9)
+    @DisplayName("Create Game")
+    public void createGameValid() throws DataAccessException {
+        GameData gameData = gameService.createGame("ferb-token", "new-game");
+
+        assertEquals(new GameData(3, null, null, "new-game", new ChessGame()), gameService.getGame(3));
+    }
+
+    @Test
+    @Order(9)
+    @DisplayName("Create Game Unauthorized")
+    public void createGameNoName() throws DataAccessException {
+        DataAccessException e = assertThrows(DataAccessException.class, () -> gameService.createGame("john-token", "new-game"));
+        assertEquals(DataAccessException.Code.Unauthorized, e.code());    }
 }

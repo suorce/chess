@@ -59,4 +59,10 @@ public class GameService {
         return dataAccess.createGame(gameData);
     }
 
+//    ONLY FOR TESTING
+
+    public void incrementGameIDForTesting() {
+        gameID++;
+    }
+
 }
