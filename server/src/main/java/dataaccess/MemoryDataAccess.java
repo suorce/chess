@@ -33,7 +33,7 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     public AuthData getAuth(String authToken) {
-            return auth.get(authToken);
+        return auth.get(authToken);
     }
 
     public void deleteAuth(String authToken) {

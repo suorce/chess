@@ -31,13 +31,23 @@ public class Service {
         return dataAccess.getUser(username);
     }
 
-    private AuthData createAuth(String username) throws DataAccessException {
+    public AuthData createAuth(String username) throws DataAccessException {
         String authToken = generateToken();
         AuthData authData = new AuthData(username, authToken);
         return dataAccess.createAuth(authData);
     }
 
-    public static String generateToken() {
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        return dataAccess.getAuth(authToken);
+    }
+
+    public void deleteAuth(String authToken) throws DataAccessException {
+        dataAccess.deleteAuth(authToken);
+    }
+
+
+
+    private static String generateToken() {
         return UUID.randomUUID().toString();
     }
 }
