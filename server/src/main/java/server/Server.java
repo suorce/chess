@@ -25,7 +25,7 @@ public class Server {
                 .post("/user", this::register)
                 .post("/session", this::login)
                 .delete("/session", this::logout)
-//                .get("/game", this::listGames)
+                .get("/game", this::listGames)
                 .post("/game", this::createGame);
 //                .put("/game", this::joinGame)
     }
@@ -62,6 +62,11 @@ public class Server {
         ctx.status(200);
     }
 
+    private void listGames(@NotNull Context ctx) throws DataAccessException {
+        String authToken = ctx.header("Authorization");
+        ListGamesResponse listGamesResponse = service.listGames(authToken);
+        ctx.result(listGamesResponse.toString());
+    }
 
     private void createGame(@NotNull Context ctx) throws DataAccessException {
         String authToken = ctx.header("Authorization");
