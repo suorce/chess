@@ -56,5 +56,22 @@ public class UserServiceTests {
         assertNull(userService.getUser("john"));
     }
 
+    @Test
+    @Order(3)
+    @DisplayName("Register User & return Auth")
+    public void registerValid() throws DataAccessException {
+        AuthData authData = userService.createUser(new UserData("gurt", "passwordGURT", "gurt@email.com"));
+        AuthData authData2 = dataAccess.getAuth(authData.authToken());
+        assertEquals(authData, authData2);
+    }
+
+    @Test
+    @Order(4
+    @DisplayName("Register taken username")
+    public void registerTakenUser() throws DataAccessException {
+        DataAccessException e = assertThrows(DataAccessException.class, () -> userService.createUser(new UserData("alice", "password123", "alice@email.com")));
+        assertEquals(DataAccessException.Code.AlreadyTaken, e.code());
+    }
+
 
 }
