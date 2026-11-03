@@ -90,8 +90,9 @@ public class MySqlDataAccess implements DataAccess {
         return new AuthData(username, authToken);
     }
 
-    public void deleteAuth(String authToken) {
-
+    public void deleteAuth(String authToken) throws DataAccessException {
+        String statement = "DELETE FROM auth WHERE authToken=?";
+        executeUpdate(statement, authToken);
     }
 
     public GameData getGame(int gameID) {
