@@ -2,7 +2,6 @@ package dataaccess.sql;
 
 import chess.ChessGame;
 import dataaccess.DataAccessException;
-import dataaccess.MySqlDataAccess;
 import model.*;
 import org.junit.jupiter.api.*;
 import org.mindrot.jbcrypt.BCrypt;

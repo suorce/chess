@@ -3,18 +3,13 @@ package service;
 import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
-import dataaccess.MemoryDataAccess;
-import dataaccess.MySqlDataAccess;
+import dataaccess.sql.MySqlDataAccess;
 import model.AuthData;
 import model.GameData;
 import model.LoginRequest;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import org.mindrot.jbcrypt.BCrypt;
-import passoff.model.*;
-import server.*;
-
-import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
