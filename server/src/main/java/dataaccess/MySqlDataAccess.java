@@ -3,6 +3,7 @@ package dataaccess;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class MySqlDataAccess implements DataAccess {
         configureDatabase();
     }
 
-    public void clear() {
+    public void clear() throws DataAccessException {
         String[] clearStatements = {
                 "TRUNCATE TABLE users",
                 "TRUNCATE TABLE auth",
@@ -27,8 +28,11 @@ public class MySqlDataAccess implements DataAccess {
         }
     }
 
-    public UserData createUser(UserData userData) {
-        return null;
+    public UserData createUser(UserData userData) throws DataAccessException {
+        String statement = "INSERT INTO users (username, password, email) VALUES (?,?,?)";
+        String passwordHash = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
+        executeUpdate(statement, userData.username(), passwordHash, userData.email());
+        return userData;
     }
 
     public UserData getUser(String username) {
@@ -63,6 +67,35 @@ public class MySqlDataAccess implements DataAccess {
         return null;
     }
 
+    private int executeUpdate(String statement, Object... params) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                for (int i = 0; i < params.length; i++) {
+                    Object param = params[i];
+                    switch (param) {
+                        case String p -> ps.setString(i + 1, p);
+                        case Integer p -> ps.setInt(i + 1, p);
+                        case ChessGame p -> ps.setString(i + 1, p.toString());
+                        case null -> ps.setNull(i + 1, NULL);
+                        default -> {
+                        }
+                    }
+                }
+                ps.executeUpdate();
+
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+
+                return 0;
+            }
+        } catch (SQLException e) {
+            System.out.println(statement);
+            System.out.println(e.getMessage());
+            throw new DataAccessException(DataAccessException.Code.ServerError);
+        }
+    }
 
     private final String[] createStatements = {
             """
