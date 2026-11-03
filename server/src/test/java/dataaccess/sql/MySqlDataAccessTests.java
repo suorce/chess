@@ -72,7 +72,8 @@ public class MySqlDataAccessTests {
         String passwordHashAlice = BCrypt.hashpw("password123", BCrypt.gensalt());
         UserData userData = new UserData("alice", passwordHashAlice, "alice@email.com");
         DataAccessException f = assertThrows(DataAccessException.class, () -> dataAccess.createUser(userData));
-        assertEquals(DataAccessException.Code.ServerError, f.code());   // AlreadyTaken (and others) handled in service, this is ServerError because it should NEVER happen
+        // AlreadyTaken (and others) handled in service, this is a ServerError because it should NEVER happen
+        assertEquals(DataAccessException.Code.ServerError, f.code());
     }
 
     @Test
