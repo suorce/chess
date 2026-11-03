@@ -132,8 +132,16 @@ public class MySqlDataAccess implements DataAccess {
         return result;
     }
 
-    public GameData updateGame(String playerName, String playerColor, int gameID) {
-        return null;
+    public GameData updateGame(String playerName, String playerColor, int gameID) throws DataAccessException {
+        String colorUsername;
+        if ("WHITE".equals(playerColor)) {
+            colorUsername = "whiteUsername";
+        } else {
+            colorUsername = "blackUsername";
+        }
+        String statement = String.format("UPDATE games SET %s=? WHERE gameID=?", colorUsername);
+        executeUpdate(statement, playerName, gameID);
+        return getGame(gameID);
     }
 
     public GameData createGame(GameData gameData) throws DataAccessException {
