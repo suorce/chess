@@ -111,5 +111,19 @@ public class MySqlDataAccessTests {
         assertEquals(DataAccessException.Code.ServerError, f.code());
     }
 
+    @Test
+    @Order(9)
+    @DisplayName("Get Auth")
+    public void getAuth() throws DataAccessException {
+        AuthData authData = new AuthData("alice", "alice-token");
+        assertEquals(authData, dataAccess.getAuth("alice-token"));
+    }
+
+    @Test
+    @Order(10)
+    @DisplayName("Get Auth with Fake Token")
+    public void getAuthFakeToken() throws DataAccessException {
+        assertNull(dataAccess.getAuth("alice-token-fake"));
+    }
 
 }
