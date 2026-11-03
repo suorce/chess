@@ -1,47 +1,18 @@
 package service;
 
-import chess.ChessGame;
-import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
-import dataaccess.sql.MySqlDataAccess;
-import model.AuthData;
-import model.GameData;
 import model.LoginRequest;
-import model.UserData;
 import org.junit.jupiter.api.*;
-import org.mindrot.jbcrypt.BCrypt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ServiceTests {
-    private DataAccess dataAccess;
+public class ServiceTests extends BaseServiceTests {
     private Service service;
 
     @BeforeEach
-    void startServer() throws DataAccessException {
-        dataAccess = new MySqlDataAccess();
+    void startService() throws DataAccessException {
         service = new Service(dataAccess);
-        dataAccess.clear();
-
-        String passwordHashAlice = BCrypt.hashpw("password123", BCrypt.gensalt());
-        dataAccess.createUser(new UserData("alice", passwordHashAlice, "alice@email.com"));
-        dataAccess.createAuth(new AuthData("alice", "alice-token"));
-
-        String passwordHashBob = BCrypt.hashpw("password456", BCrypt.gensalt());
-        dataAccess.createUser(new UserData("bob", passwordHashBob, "bob@email.com"));
-        dataAccess.createAuth(new AuthData("bob", "bob-token"));
-
-        String passwordHashEve = BCrypt.hashpw("password789", BCrypt.gensalt());
-        dataAccess.createUser(new UserData("eve", passwordHashEve, "eve@email.com"));
-        dataAccess.createAuth(new AuthData("eve", "eve-token"));
-
-        String passwordHashFerb = BCrypt.hashpw("password000", BCrypt.gensalt());
-        dataAccess.createUser(new UserData("ferb", passwordHashFerb, "ferb@email.com"));
-        dataAccess.createAuth(new AuthData("ferb", "ferb-token"));
-
-        dataAccess.createGame(new GameData(1, "alice", "bob", "game1", new ChessGame()));
-        dataAccess.createGame(new GameData(2, "eve", null, "game2", new ChessGame()));
     }
 
 

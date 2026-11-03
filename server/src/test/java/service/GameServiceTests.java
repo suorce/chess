@@ -6,43 +6,18 @@ import dataaccess.DataAccessException;
 import dataaccess.sql.MySqlDataAccess;
 import model.*;
 import org.junit.jupiter.api.*;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GameServiceTests {
-    private DataAccess dataAccess;
+public class GameServiceTests extends BaseServiceTests {
     private GameService gameService;
-    private AuthService authService;
 
     @BeforeEach
-    void startServer() throws DataAccessException {
-        dataAccess = new MySqlDataAccess();
-        authService = new AuthService(dataAccess);
+    void startGameService() throws DataAccessException {
         gameService = new GameService(dataAccess, authService);
-        dataAccess.clear();
-
-        String passwordHashAlice = BCrypt.hashpw("password123", BCrypt.gensalt());
-        dataAccess.createUser(new UserData("alice", passwordHashAlice, "alice@email.com"));
-        dataAccess.createAuth(new AuthData("alice", "alice-token"));
-
-        String passwordHashBob = BCrypt.hashpw("password456", BCrypt.gensalt());
-        dataAccess.createUser(new UserData("bob", passwordHashBob, "bob@email.com"));
-        dataAccess.createAuth(new AuthData("bob", "bob-token"));
-
-        String passwordHashEve = BCrypt.hashpw("password789", BCrypt.gensalt());
-        dataAccess.createUser(new UserData("eve", passwordHashEve, "eve@email.com"));
-        dataAccess.createAuth(new AuthData("eve", "eve-token"));
-
-        String passwordHashFerb = BCrypt.hashpw("password000", BCrypt.gensalt());
-        dataAccess.createUser(new UserData("ferb", passwordHashFerb, "ferb@email.com"));
-        dataAccess.createAuth(new AuthData("ferb", "ferb-token"));
-
-        dataAccess.createGame(new GameData(1, "alice", "bob", "game1", new ChessGame()));
-        dataAccess.createGame(new GameData(2, "eve", null, "game2", new ChessGame()));
         gameService.incrementGameIDForTesting();
         gameService.incrementGameIDForTesting();
     }
@@ -122,7 +97,7 @@ public class GameServiceTests {
     public void createGameValid() throws DataAccessException {
         GameData gameData = gameService.createGame("ferb-token", "new-game");
 
-        assertEquals(new GameData(3, null, null, "new-game", new ChessGame()), gameService.getGame(3));
+        assertEquals(gameData, gameService.getGame(3));
     }
 
     @Test
