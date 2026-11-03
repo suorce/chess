@@ -76,4 +76,22 @@ public class MySqlDataAccessTests {
         assertEquals(DataAccessException.Code.ServerError, f.code());   // AlreadyTaken (and others) handled in service, this is ServerError because it should NEVER happen
     }
 
+    @Test
+    @Order(5)
+    @DisplayName("Get User")
+    public void getUser() throws DataAccessException {
+        UserData userData = dataAccess.getUser("alice");
+        assertEquals("alice", userData.username());
+        assert(BCrypt.checkpw("password123", userData.password()));
+        assertEquals("alice@email.com", userData.email());
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("Get Nonexistent User")
+    public void getNonexistentUser() throws DataAccessException {
+        assertNull(dataAccess.getUser("gurt"));
+    }
+
+
 }
