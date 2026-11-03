@@ -161,16 +161,7 @@ public class MySqlDataAccess implements DataAccess {
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (int i = 0; i < params.length; i++) {
-                    Object param = params[i];
-                    switch (param) {
-                        case String p -> ps.setString(i + 1, p);
-                        case Integer p -> ps.setInt(i + 1, p);
-                        case null -> ps.setNull(i + 1, NULL);
-                        default -> {
-                        }
-                    }
-                }
+                setParameters(ps, params);
                 ps.executeUpdate();
 
                 ResultSet rs = ps.getGeneratedKeys();
@@ -184,6 +175,19 @@ public class MySqlDataAccess implements DataAccess {
             System.out.println(statement);
             System.out.println(e.getMessage());
             throw new DataAccessException(DataAccessException.Code.ServerError);
+        }
+    }
+
+    private void setParameters(PreparedStatement ps, Object... params) throws SQLException {
+        for (int i = 0; i < params.length; i++) {
+            Object param = params[i];
+            switch (param) {
+                case String p -> ps.setString(i + 1, p);
+                case Integer p -> ps.setInt(i + 1, p);
+                case null -> ps.setNull(i + 1, NULL);
+                default -> {
+                }
+            }
         }
     }
 
@@ -224,7 +228,7 @@ public class MySqlDataAccess implements DataAccess {
                 }
             }
         } catch (SQLException ex) {
-            throw new DataAccessException(DataAccessException.Code.ServerError); // MAY NEED TO REWORK DATAACCESSEXCEPTION CLASS
+            throw new DataAccessException(DataAccessException.Code.ServerError);
         }
     }
 
