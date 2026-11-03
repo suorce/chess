@@ -60,8 +60,10 @@ public class MySqlDataAccess implements DataAccess {
         return new UserData(username, passwordHash, email);
     }
 
-    public AuthData createAuth(AuthData authData) {
-        return null;
+    public AuthData createAuth(AuthData authData) throws DataAccessException {
+        String statement = "INSERT INTO auth (username, authToken) VALUES (?,?)";
+        executeUpdate(statement, authData.username(), authData.authToken());
+        return authData;
     }
 
     public AuthData getAuth(String authToken) {
