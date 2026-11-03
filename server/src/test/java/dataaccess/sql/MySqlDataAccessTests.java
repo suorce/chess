@@ -167,4 +167,13 @@ public class MySqlDataAccessTests {
         assertEquals(gamesList, dataAccess.listGames());
     }
 
+    @Test
+    @Order(16)
+    @DisplayName("Update Game")
+    public void updateGame() throws DataAccessException {
+        GameData gameData = new GameData(2, "eve", "ferb", "game2", new ChessGame());
+        dataAccess.updateGame("ferb", "blackUsername",2);
+        assertEquals(gameData, dataAccess.getGame(2));
+    }
+
 }
