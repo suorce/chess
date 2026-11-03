@@ -3,7 +3,6 @@ package dataaccess;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.*;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -30,8 +29,7 @@ public class MySqlDataAccess implements DataAccess {
 
     public UserData createUser(UserData userData) throws DataAccessException {
         String statement = "INSERT INTO users (username, password, email) VALUES (?,?,?)";
-        String passwordHash = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
-        executeUpdate(statement, userData.username(), passwordHash, userData.email());
+        executeUpdate(statement, userData.username(), userData.password(), userData.email());
         return userData;
     }
 

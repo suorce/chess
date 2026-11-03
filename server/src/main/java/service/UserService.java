@@ -5,6 +5,7 @@ import dataaccess.DataAccessException;
 import model.AuthData;
 import model.LoginRequest;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.UUID;
 
@@ -20,20 +21,25 @@ public class UserService {
 
     public AuthData createUser(UserData userData) throws DataAccessException {
         String username = userData.username();
+        String passwordHash = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
+        UserData hashedUser = new UserData(username, passwordHash, userData.email());
 
         if (getUser(username) != null) {
             throw new DataAccessException(DataAccessException.Code.AlreadyTaken);
         }
-        dataAccess.createUser(userData);
+        dataAccess.createUser(hashedUser);
         return authService.createAuth(username);
     }
 
     public AuthData loginUser(LoginRequest loginRequest) throws DataAccessException {
         String username = loginRequest.username();
-        String password = loginRequest.password();
         UserData userData = getUser(username);
 
-        if (userData == null || !userData.password().equals(password)) {
+        if (userData == null) {
+            throw new DataAccessException(DataAccessException.Code.Unauthorized);
+        }
+        String passwordHash = getUser(username).password();
+        if (!BCrypt.checkpw(loginRequest.password(), passwordHash)) {
             throw new DataAccessException(DataAccessException.Code.Unauthorized);
         }
 
