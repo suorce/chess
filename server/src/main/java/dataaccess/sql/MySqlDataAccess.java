@@ -166,7 +166,6 @@ public class MySqlDataAccess implements DataAccess {
                     switch (param) {
                         case String p -> ps.setString(i + 1, p);
                         case Integer p -> ps.setInt(i + 1, p);
-                        case ChessGame p -> ps.setString(i + 1, p.toString());
                         case null -> ps.setNull(i + 1, NULL);
                         default -> {
                         }
