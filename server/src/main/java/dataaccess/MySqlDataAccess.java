@@ -35,8 +35,29 @@ public class MySqlDataAccess implements DataAccess {
         return userData;
     }
 
-    public UserData getUser(String username) {
+    public UserData getUser(String username) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String statement = "SELECT * FROM users WHERE username=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, username);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readUser(rs);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.printf("Unable to read data: %s%n", e.getMessage());
+            throw new DataAccessException(DataAccessException.Code.ServerError);
+        }
         return null;
+    }
+
+    private UserData readUser(ResultSet rs) throws SQLException {
+        String username = rs.getString(1);
+        String passwordHash = rs.getString(2);
+        String email = rs.getString(3);
+        return new UserData(username, passwordHash, email);
     }
 
     public AuthData createAuth(AuthData authData) {
