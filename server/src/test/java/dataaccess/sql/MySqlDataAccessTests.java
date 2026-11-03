@@ -141,4 +141,19 @@ public class MySqlDataAccessTests {
         dataAccess.deleteAuth("alice-token-fake");
         assertNull(dataAccess.getAuth("alice-token-fake"));
     }
+
+    @Test
+    @Order(13)
+    @DisplayName("Get Game")
+    public void getGame() throws DataAccessException {
+        GameData gameData = new GameData(1, "alice", "bob", "game1", new ChessGame());
+        assertEquals(gameData, dataAccess.getGame(1));
+    }
+
+    @Test
+    @Order(14)
+    @DisplayName("Get Nonexistent Game")
+    public void getNonexistentGame() throws DataAccessException {
+        assertNull(dataAccess.getGame(4));
+    }
 }
