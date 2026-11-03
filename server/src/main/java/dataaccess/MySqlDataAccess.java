@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.*;
 
@@ -16,7 +17,14 @@ public class MySqlDataAccess implements DataAccess {
     }
 
     public void clear() {
-
+        String[] clearStatements = {
+                "TRUNCATE TABLE users",
+                "TRUNCATE TABLE auth",
+                "TRUNCATE TABLE games"
+        };
+        for (String statement : clearStatements) {
+            executeUpdate(statement);
+        }
     }
 
     public UserData createUser(UserData userData) {
