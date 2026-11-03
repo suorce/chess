@@ -95,8 +95,23 @@ public class MySqlDataAccess implements DataAccess {
         executeUpdate(statement, authToken);
     }
 
-    public GameData getGame(int gameID) {
-        return null;
+    public GameData getGame(int gameID) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String statement = "SELECT * FROM games WHERE gameID=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, gameID);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readGame(rs);
+                    } else {
+                        return null;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.printf("Unable to read data: %s%n", e.getMessage());
+            throw new DataAccessException(DataAccessException.Code.ServerError);
+        }
     }
 
     public ArrayList<GameData> listGames() {
@@ -109,6 +124,16 @@ public class MySqlDataAccess implements DataAccess {
 
     public GameData createGame(GameData gameData) {
         return null;
+    }
+
+    private GameData readGame(ResultSet rs) throws SQLException {
+        int gameID = rs.getInt(1);
+        String whiteUsername = rs.getString(2);
+        String blackUsername = rs.getString(3);
+        String gameName = rs.getString(4);
+        String gameString = rs.getString(5);
+        ChessGame game = new Gson().fromJson(gameString, ChessGame.class);
+        return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
     }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
