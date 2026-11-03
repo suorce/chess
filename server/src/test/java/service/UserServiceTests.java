@@ -46,7 +46,8 @@ public class UserServiceTests extends BaseServiceTests {
     @Order(4)
     @DisplayName("Register taken username")
     public void registerTakenUser() throws DataAccessException {
-        DataAccessException e = assertThrows(DataAccessException.class, () -> userService.createUser(new UserData("alice", "password123", "alice@email.com")));
+        DataAccessException e = assertThrows(DataAccessException.class,
+                () -> userService.createUser(new UserData("alice", "password123", "alice@email.com")));
         assertEquals(DataAccessException.Code.AlreadyTaken, e.code());
     }
 
@@ -63,7 +64,8 @@ public class UserServiceTests extends BaseServiceTests {
     @Order(6)
     @DisplayName("Login with incorrect password")
     public void loginIncorrectPassword() throws DataAccessException {
-        DataAccessException e = assertThrows(DataAccessException.class, () -> userService.loginUser(new LoginRequest("alice", "bad-guess")));
+        DataAccessException e = assertThrows(DataAccessException.class,
+                () -> userService.loginUser(new LoginRequest("alice", "bad-guess")));
         assertEquals(DataAccessException.Code.Unauthorized, e.code());
     }
 
@@ -79,7 +81,8 @@ public class UserServiceTests extends BaseServiceTests {
     @Order(8)
     @DisplayName("Logout with fake token")
     public void logoutFakeToken() throws DataAccessException {
-        DataAccessException e = assertThrows(DataAccessException.class, () -> authService.deleteAuth("john-token"));
+        DataAccessException e = assertThrows(DataAccessException.class,
+                () -> authService.deleteAuth("john-token"));
         assertEquals(DataAccessException.Code.Unauthorized, e.code());
     }
 

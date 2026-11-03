@@ -15,7 +15,6 @@ public class ServiceTests extends BaseServiceTests {
         service = new Service(dataAccess);
     }
 
-
     @Test
     @Order(1)
     @DisplayName("Clear database, then login")
