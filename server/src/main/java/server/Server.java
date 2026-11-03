@@ -3,7 +3,7 @@ package server;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import dataaccess.DataAccessException;
-import dataaccess.MemoryDataAccess;
+import dataaccess.sql.MySqlDataAccess;
 import io.javalin.*;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,15 @@ public class Server {
     private final Javalin javalin;
 
     public Server() {
-        this(new Service(new MemoryDataAccess()));
+        this(createService());
+    }
+
+    private static Service createService() {
+        try {
+            return new Service(new MySqlDataAccess());
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Server(Service service) {

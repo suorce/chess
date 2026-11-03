@@ -1538,3 +1538,511 @@
     - Circular Dependencies: The Service layer calling the Server, or two Services calling each other directly.	Ensure a strict top-down flow: Server -> Service -> DAO.
     - Hardcoding Dependencies: Using new to instantiate dependencies inside a constructor.	Use Constructor Injection to pass dependencies from the main application entry point.
 
+### Unit Testing
+
+### Code Coverage
+
+### Writing Quality Code
+
+### Style Checking
+
+## Database
+
+### Relational Model
+- Relational Databases Overview
+    - Database Management Systems (DBMS)
+        - databases implemented by DBMS, provide services needed from database
+        - mostly use relational databases (including Oracle, MySQL, PostgreSQL, MS SQL)
+        - DBMS's store data in files in a way that scales to large amounts of data and allows efficient access
+    - Programmatic vs. Interactive Database Access
+        - programs can access through APIs
+        - end users can access through interactive management applications that allow query and modification of DB
+    - Embedded vs Client/Server
+        - embedded = part of code, not accessible from other application
+        - client/server = make database available through database server
+    - Relational Databases
+        - data stored in tables containing columns and rows
+        - each row has primary key (unique id)
+        - represent relationships between rows by relating primary keys across different table
+        - taken together, table definitions in db make up its "schema"
+    - introduced Physical Data Independence = the way data is stored physically does not affect how it is accessed logically
+        - Data Integrity and Constraints: Relational databases enforce rules (constraints) that prevent orphaned records or duplicate data, ensuring that the information remains accurate and reliable over time.
+        - SQL Standardization: The Structured Query Language (SQL) provides a universal, declarative way to interact with data. Instead of writing complex loops to find a record, a user simply tells the database what they want, and the engine determines how to get it.
+        - ACID Compliance: Most relational systems support ACID (Atomicity, Consistency, Isolation, Durability) properties, which guarantee that database transactions are processed reliably, even in the event of a system crash.
+        - Normalization: The model encourages "normalization," a process of organizing data to minimize redundancy, which saves storage space and prevents update anomalies.
+- Understanding the Relational Model (using Book Club)
+    - member table, book table, books_read table
+    - member -> book (many) + book -> member (many) == many-to-many relationship
+        - put another table between the 2 (books read)
+    - relate tables together using primary keys and foreign keys (primary keys used to reference row in another table)
+        - book id foreign in books_read table
+    - natural key = has meaning outside the table, can avoid requiring a "join" with another table to obtain info
+        - genre key
+    - primary keys
+        - need to be unique
+        - every row needs one
+        - doesn't work if they're changing (must be consistent and stable)
+        - artificial primary keys (not natural) always guaranteed to work, but lose info
+        - can consist of MULTIPLE columns (books_read containing member_id && book_id)
+            - neither member_id or book_id can uniquely identify row, but compounding them into a "composite primary key" will
+    - tables can relate to themselves (parent_id pointing to another id row)
+    - types of object relationships
+        - one-to-one
+            - person has one head, head belongs to one person
+            - not common, can usually be combined
+            - Either table contains foreign key referencing the other
+        - one-to-many
+            - book has one category, category has many books
+            - category has one parent category, parent category has many sub-categories
+            - the "Many" table contains a foreign key referencing the "One" table
+        - many-to-many
+            - member has read many books, book has been read by many members
+            - create a "join table" (intersecting entity) whose rows contain foreign keys of both tables
+            - combination of keys becomes primary key
+- Modeling a Database Schema
+    - Entity Relationship Diagram (ERD)
+        - line represents relationship
+            - "Crow's Foot" represents many = one genre to many books
+            - Slash represents one = many books to one genre
+            - Circle (on crows foot) represents optional = genre may have no books
+        - for many-to-many relationships
+            - must put table in between, representing 2 one-to-many relationships
+    - UML Diagram
+        - standard for everything BUT databases, but can still be used
+        - 1 = one
+        - * = many
+        - 0..1, 0..* = optional one/optional many
+- Modeling Inheritance Relationships
+    - UML info
+        - Class can have one box (just class name) or up to 3
+            - first = name
+            - middle = instance variables
+            - bottom = methods\
+        - Closed, unfilled arrowhead AND
+            solid line = inheritance
+            dotted line = interface implementation
+    - Horizontal Partitioning
+        - creates table for each class that is concrete (NOT abstract)
+        - instance variables from parent abstract class have to be represented in all tables representing sub-classes
+        - cheap to work with subclass data, expensive to work with common data
+        - columns duplicated in subclass tables
+    - Vertical Partitioning
+        - each class mapped to a table, even abstract ones
+        - subclass tables don't contain parent class variables
+        - cheap to work with common data, expensive to work with subclass data
+    - Unification
+        - each subclass mapped to the same table
+        - fast, but wasted space - subclass objects won't use variables from other subclasses
+    - depending on what questions we want to ask database most, we choose horizontal vs vertical vs unification
+    - more types
+        - Table-per-Hierarchy: All classes in the hierarchy are stored in a single table with a "discriminator" column to identify the type.
+        - Table-per-Type: Each class has its own table, and the child table's primary key also serves as a foreign key to the parent table's primary key
+- Engineering Principles in the Relational Model
+    - abstraction, separation of concerns, declarative programming (to manage complexity)
+    - Data independence and Abstraction
+        - Physical Data Independence - You can change storage structures (like moving from a B-Tree index to a Hash index) without modifying the SQL queries
+        - Logical Data Independence - You can change the schema (like splitting a table) and use "Views" to ensure the original interface remains available to the application
+
+### MySQL
+- | Feature         | MySQL                | PostgreSQL                      | SQLite               | MongoDB                     |
+    | --------------- | -------------------- | ------------------------------- | -------------------- | --------------------------- |
+    | Type            | Relational (RDBMS)   | Relational (RDBMS)              | Relational (RDBMS)   | Document (NoSQL)            |
+    | Best For        | Web apps, E-commerce | Complex queries, Data integrity | Mobile apps, Testing | Big data, Unstructured data |
+    | Scalability     | High (Read-heavy)    | High (Complex writes)           | Low (Single file)    | Very High (Horizontal)      |
+    | ACID Compliance | Yes (with InnoDB)    | Yes (Full)                      | Yes                  | Partial / Tunable           |
+    | Ease of Setup   | Easy                 | Moderate                        | Very Easy            | Easy                        |
+- Common SQL Commmands
+    - | Command                 | Purpose                                             | Example                                          |
+        | ----------------------- | --------------------------------------------------- | ------------------------------------------------ |
+        | `SHOW DATABASES`        | Lists all available databases                       | `SHOW DATABASES;`                                |
+        | `USE name`              | Opens a specific database                           | `USE student;`                                   |
+        | `SHOW TABLES`           | Lists all tables in the currently selected database | `SHOW TABLES;`                                   |
+        | `DESCRIBE name`         | Lists the fields (columns) for a specific table     | `DESCRIBE student;`                              |
+        | `SHOW INDEX FROM name`  | Lists the indexes for a specific table              | `SHOW INDEX FROM student;`                       |
+        | `SHOW FULL PROCESSLIST` | Lists currently executing queries                   | `SHOW FULL PROCESSLIST;`                         |
+        | `CREATE DATABASE name`  | Creates a new database                              | `CREATE DATABASE student;`                       |
+        | `DROP DATABASE name`    | Deletes a database                                  | `DROP DATABASE student;`                         |
+        | `CREATE TABLE name`     | Creates a new table                                 | `CREATE TABLE pet (name VARCHAR(128), age INT);` |
+        | `INSERT INTO name`      | Inserts data into a table                           | `INSERT INTO pet VALUES ("zoe", 3);`             |
+        | `SELECT * FROM name`    | Queries data from a table                           | `SELECT * FROM pet;`                             |
+        | `DROP TABLE name`       | Deletes a table                                     | `DROP TABLE pet;`                                |
+
+### SQL
+- Intro
+    - SQL statements categorized into three main groups
+        - DDL (Data Definition Language): Used to define or modify the database structure (e.g., CREATE, ALTER, DROP).
+        - DML (Data Manipulation Language): Used to manage data within the objects (e.g., INSERT, UPDATE, DELETE).
+        - DQL (Data Query Language): Used to retrieve data from the database (e.g., SELECT).
+    - ```SQL
+        -- Create and select the database
+        CREATE DATABASE pets;
+        USE pets;
+
+        -- Create a basic table structure
+        CREATE TABLE pet (
+            id INT, 
+            name VARCHAR(255), 
+            type VARCHAR(255)
+        );
+
+        -- Insert sample records
+        INSERT INTO pet VALUES (93, 'Fido', 'dog');
+        INSERT INTO pet VALUES (14, 'Puddles', 'cat');
+        INSERT INTO pet VALUES (77, 'Chip', 'bird');
+
+        -- View the table schema
+        DESCRIBE pet;
+        ```
+    - output of `DESCRIBE` - DESCRIBES TABLE SCHEMA
+        - | Field | Type         | Null | Key | Default | Extra |
+            |-------|--------------|------|-----|---------|-------|
+            | id    | int          | YES  |     | NULL    |       |
+            | name  | varchar(255) | YES  |     | NULL    |       |
+            | type  | varchar(255) | YES  |     | NULL    |       |
+    - `SELECT id, name, type FROM pet;` - retrieve specific columns for all pets
+        - | id     | name     | type          |
+            |--------|----------|---------------|
+            | 93     | Fido     | dog           |
+            | 14     | Puddles  | cat           |
+            | 77     | Chip     | bird          |
+    - **declarative language** - declare WHAT data you want, db engine determines most efficient way to retrieve it
+- Working with Databases
+    - a Database server can host multiple independent databases
+        - `CREATE DATABASE pets;` - create new db
+        - `USE pets` - use it as active db for subsequent cmds
+    - character set defines how text is encoded
+        - `ALTER DATABASE pets CHARACTER SET utf8mb4;` - for full international and emoji support
+    - delete database and all its data
+        - `DROP DATABASE pets;` - WARNING: PERMANENT
+- Working with Tables
+    - once db created, can create tables to organize data
+    - table definition conceptually similar to class in java - each field and its type must be defined
+        - ```SQL
+            CREATE TABLE pet (
+                id INT NOT NULL AUTO_INCREMENT,
+                name VARCHAR(255) NOT NULL,
+                type VARCHAR(255) NOT NULL,
+                PRIMARY KEY (id)
+            );
+            ```
+            - `NOT NULL` constraint ensures that a value must be provided for that column in every row.
+            - `AUTO_INCREMENT` keyword allows the database to automatically generate a unique, increasing integer for each new row.
+            - `PRIMARY KEY` constraint uniquely identifies each record in the table.
+    - Altering Tables
+        - add `nickname` column without `NOT NULL`, existing rows `nickname` set to `NULL`
+            - `ALTER TABLE pet ADD COLUMN nickname VARCHAR(255);`
+    - Primary Keys and Indexes
+        - attempting to insert dupe into primary key will result in error
+        - Primary keys **indexed** by default for fast retrieval, but consume storage and slow down write ops
+            - create indexes on columns frequently used in `WHERE` clauses or `JOIN` conditions
+        - ```SQL
+            -- Creating an index during table creation
+            CREATE TABLE pet (
+                id INT NOT NULL AUTO_INCREMENT,
+                name VARCHAR(255) NOT NULL,
+                PRIMARY KEY (id),
+                INDEX (name)
+            );
+
+            -- Adding an index to an existing table
+            CREATE INDEX idx_pet_name ON pet (name);
+            ```
+    - Common SQL Data Types
+        - | **Data type** | **Description**                                               | **Example**           |
+            | :------------ | :------------------------------------------------------------ | :-------------------- |
+            | **INT**       | Whole numbers.                                                | 1, 10, -100           |
+            | **DECIMAL**   | Fixed-point numbers (used for exact precision like currency). | 1.23, 100.00          |
+            | **FLOAT**     | Single-precision floating-point numbers.                      | 1.234567              |
+            | **DOUBLE**    | Double-precision floating-point numbers.                      | 1.234567890123        |
+            | **CHAR**      | Fixed-length strings (padded with spaces).                    | 'A', 'USA'            |
+            | **VARCHAR**   | Variable-length strings.                                      | 'Fido', 'Hello World' |
+            | **TEXT**      | Large amounts of variable-length text data.                   | (A long article)      |
+            | **BLOB**      | Binary Large Object (for images or raw files).                | (Binary data)         |
+            | **DATE**      | Date values (YYYY-MM-DD).                                     | '2023-10-14'          |
+            | **TIME**      | Time values (HH:MM:SS).                                       | '15:43:45'            |
+            | **DATETIME**  | Combined date and time values.                                | '2023-10-14 15:43:45' |
+- Inserting, Updating, Deleting Data
+    - `INSERT` adds new rows to a table
+        - `INSERT INTO pet (name, type) VALUES ('Puddles', 'cat');`
+    - `UPDATE` modifies existing data - **without `WHERE` clause, EVERY ROW will be updated**
+        - `UPDATE pet SET name = 'Fido' WHERE id = 1;`
+    - `DELETE` removes rows - `WHERE` clause necessary to avoid table wipe
+        - `DELETE FROM pet WHERE type = 'cat';`
+    - `TRUNCATE` to delete **all** rows while keeping structure and resetting auto-increment counters
+        - `TRUNCATE TABLE pet;`
+- Selecting Data
+    - `SELECT` to query data ; basic returns specific columns for every row
+        - `SELECT name, type FROM pet;`
+    - `WHERE` to filter results, sort with `ORDER BY`, restrict number of results with `LIMIT`
+        - ```SQL
+            SELECT name, type 
+            FROM pet 
+            WHERE type = 'dog' OR (type = 'cat' AND name = 'Puddles') 
+            ORDER BY name ASC
+            LIMIT 2;
+            ```
+    - `*` to select all columns, `COUNT()` to return total number of rows matching criteria
+        - ```SQL
+            SELECT * FROM pet;
+            SELECT COUNT(*) FROM pet WHERE type = 'dog';
+            ```
+- Joining Tables
+    - data often split into multiple tables to reduce redundancy
+    - `JOIN` clause combines data from related tables - links rows based on common column, typically foreign key
+        - ```SQL
+            SELECT purchase.id AS purchaseId, purchase.ownerId, pet.id AS petId, pet.name, pet.type
+            FROM purchase 
+            JOIN pet ON purchase.petId = pet.id;
+            ```
+        - Purchase Table
+            - | id | petId | ownerId |
+                |----|-------|---------|
+                |  1 |   890 |       3 |
+                |  2 |   891 |       3 |
+                |  3 |   895 |       4 |
+        - Pet Table
+            - | id  | name    | type |
+                |-----|---------|------|
+                | 890 | Puddles | cat  |
+                | 891 | Fluffy  | cat  |
+                | 895 | Fido    | dog  |
+        - Joined Result
+            - | purchaseId | ownerId | petId | name    | type |
+                |------------|---------|-------|---------|------|
+                |          1 |       3 |   890 | Puddles | cat  |
+                |          2 |       3 |   891 | Fluffy  | cat  |
+                |          3 |       4 |   895 | Fido    | dog  |
+- Database Transactions
+    - transaction - a sequence of SQL operations treated as a single unit of work
+        - ensure data integrity by adhering to ACID properties
+            - Atomicity: All operations in the transaction succeed, or none do.
+            - Consistency: The database moves from one valid state to another, following all defined rules.
+            - Isolation: Concurrent transactions do not interfere with each other's intermediate states.
+            - Durability: Once a transaction is committed, the changes are permanent, even in the event of a system failure.
+        - how-to
+            - `START TRANSACTION`
+            - execute cmds
+            - `COMMIT` to save changes permanently
+            - `ROLLBACK` to undo if error occurs
+- Initialize Database
+    - `IF NOT EXISTS` makes scripts **idempotent** (can be run multiple times without error or dupes)
+    - ```SQL
+        CREATE DATABASE IF NOT EXISTS pets;
+        USE pets;
+
+        CREATE TABLE IF NOT EXISTS pet (
+            id INT NOT NULL AUTO_INCREMENT,
+            name VARCHAR(255) NOT NULL,
+            type VARCHAR(255) NOT NULL,
+            PRIMARY KEY (id)
+        );
+        ```
+    - **Infrastructure as Code** - by treating schema config as code, can track changes in version control and automate setup of dev, test, and prod envs
+        - can execute SQL scripts from a file using command-line client
+- Table of Common SQL Commands
+    - | **Command**        | **Purpose**                           | **Example**                                               |
+        | :----------------- | :------------------------------------ | :-------------------------------------------------------- |
+        | **CREATE DATABASE** | Creates a new database.              | `CREATE DATABASE store;`                                  |
+        | **DROP DATABASE**   | Deletes a database and its data.      | `DROP DATABASE store;`                                    |
+        | **USE**             | Sets the active database.             | `USE store;`                                              |
+        | **CREATE TABLE**    | Defines a new table.                  | `CREATE TABLE pet (id INT);`                              |
+        | **DESCRIBE**        | Displays table structure.             | `DESCRIBE pet;`                                           |
+        | **ALTER TABLE**     | Modifies table structure.             | `ALTER TABLE pet ADD age INT;`                            |
+        | **DROP TABLE**      | Deletes a table and its data.         | `DROP TABLE pet;`                                         |
+        | **INSERT INTO**     | Adds new rows.                        | `INSERT INTO pet (name) VALUES ('Fido');`                 |
+        | **SELECT**          | Retrieves data.                       | `SELECT * FROM pet;`                                      |
+        | **UPDATE**          | Modifies existing rows.               | `UPDATE pet SET name='Rex' WHERE id=1;`                   |
+        | **DELETE**          | Removes specific rows.                | `DELETE FROM pet WHERE id=1;`                             |
+        | **TRUNCATE TABLE**  | Empties a table but keeps structure.  | `TRUNCATE TABLE pet;`                                     |
+        | **CREATE INDEX**    | Optimizes data retrieval.             | `CREATE INDEX idx_n ON pet (name);`                       |
+        | **CREATE VIEW**     | Creates a virtual table from a query. | `CREATE VIEW dogs AS SELECT * FROM pet WHERE type='dog';` |
+
+### Java Database Connectivity (JDBC)
+- create connection to DB
+    - download MySQL JDBC driver JAR file, allows use of standard JDK JDVC classes
+    - ```java
+        import java.sql.DriverManager;
+
+        public class DatabaseExample {
+            public static void main(String[] args) throws Exception {
+                // Use try-with-resources to ensure the connection is closed automatically
+                try (var conn = DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "monkeypie")) {
+                    conn.setCatalog("pets");
+
+                    try (var preparedStatement = conn.prepareStatement("SELECT id, name, type FROM pet")) {
+                        try (var rs = preparedStatement.executeQuery()) {
+                            while (rs.next()) {
+                                var id = rs.getInt("id");
+                                var name = rs.getString("name");
+                                var type = rs.getString("type");
+
+                                System.out.printf("id: %d, name: %s, type: %s%n", id, name, type);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ```
+- Database Connectors
+    - `java.sql` pkg contains interfaces and abstract classes for connecting to a RDBMS, but must download specific connector that implements these interfaces for the one being used (MySQL Connector/J)
+- Obtaining a Connection
+    - with db-specific connector installed, can use JDK `DriverManager` class to obtain a connection to db specified by URL
+    - use **try-with-resources** so connection is released after `try` block exits - important because connections to db server are limited
+    - ```java
+        Connection getConnection() throws SQLException {
+            return DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "monkeypie");
+        }
+
+        void makeSQLCalls() throws SQLException {
+            try (var conn = getConnection()) {
+                // Execute SQL statements on the connection here
+            }
+        }
+        ```
+- Creating Databases and Tables
+    - once connection established, can create db's and tables
+    - best practice: write code that init's db schema (if don't exist) when app starts. ensures env is always correctly config'd
+    - ex: connect, create `pets` db, create `pet` table
+        - ```java
+            void configureDatabase() throws SQLException {
+                try (var conn = getConnection()) {
+                    var createDbStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS pets");
+                    createDbStatement.executeUpdate();
+
+                    conn.setCatalog("pets");
+
+                    var createPetTable = """
+                        CREATE TABLE IF NOT EXISTS pet (
+                            id INT NOT NULL AUTO_INCREMENT,
+                            name VARCHAR(255) NOT NULL,
+                            type VARCHAR(255) NOT NULL,
+                            PRIMARY KEY (id)
+                        )""";
+
+                    try (var createTableStatement = conn.prepareStatement(createPetTable)) {
+                        createTableStatement.executeUpdate();
+                    }
+                }
+            }
+            ```
+            - execute SQL statements by first creating `PrepareStatement`
+                - must close after finished
+            - `setCatalog` after ensure db existence
+                - tells connection that subsequent calls should be executed on specific db (equivalent to SQL `USE`)
+- Inserting Data
+    - ex: insert new row into `pet` table
+        - ```java
+            int insertPet(Connection conn, String name, String type) throws SQLException {
+                try (var preparedStatement = conn.prepareStatement("INSERT INTO pet (name, type) VALUES(?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+                    preparedStatement.setString(1, name);
+                    preparedStatement.setString(2, type);
+
+                    preparedStatement.executeUpdate();
+
+                    var resultSet = preparedStatement.getGeneratedKeys();
+                    var id = 0;
+                    if (resultSet.next()) {
+                        id = resultSet.getInt(1);
+                    }
+
+                    return id;
+                }
+            }
+            ```
+            - creates `PreparedStatement` containing `INSERT` (avoiding SQL injection)
+        - `setString` - (`set` methods for all standard SQL types)
+            - first arg - 1-based index of param
+            - second arg - value
+        - after param population, execute with `executeUpdate`
+    - Generating Primary Keys
+        - if `id` col set to `AUTO_INCREMENT`, db automates primary key assignment
+        - to retrieve generated keys, pass `RETURN_GENERATED_KEYS` flag when creating `PreparedStatement` and `getGeneratedKeys` after execution - returns `ResultSet`
+    - Protecting against SQL injection
+        - using `set` functions helps prevent SQL injection (allows attacker to inject SQL syntax into statement)
+        - sanatize input so it only contains expected patterns
+            - ```java
+                void insertPet(String name) throws SQLException {
+                    var conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/pets", "root", "monkeypie");
+
+                    if (name.matches("[a-zA-Z]+")) {
+                        var statement = "INSERT INTO pet (name) VALUES(?)";
+                        try (var preparedStatement = conn.prepareStatement(statement)) {
+                            preparedStatement.setString(1, name);
+                            preparedStatement.executeUpdate();
+                        }
+                    }
+                }
+                ```
+            - validates format, uses `set`, does not allow multiple statements in a single execute
+- Updates
+    - similar to insert, just change SQL statement
+    - ALWAYS INCLUDE `WHERE`
+    - ```java
+        void updatePet(Connection conn, int petID, String name) throws SQLException {
+            try (var preparedStatement = conn.prepareStatement("UPDATE pet SET name=? WHERE id=?")) {
+                preparedStatement.setString(1, name);
+                preparedStatement.setInt(2, petID);
+
+                preparedStatement.executeUpdate();
+            }
+        }
+        ```
+- Deleting Data
+    - use `DELETE` with `WHERE`
+        - ```java
+            void deletePet(Connection conn, int petID) throws SQLException {
+                try (var preparedStatement = conn.prepareStatement("DELETE FROM pet WHERE id=?")) {
+                    preparedStatement.setInt(1, petID);
+                    preparedStatement.executeUpdate();
+                }
+            }
+            ```
+    - `TRUNCATE TABLE` better for entire table
+- Queries
+    - To retrieve data, use the `executeQuery` method on a `PreparedStatement`. This returns a `java.sql.ResultSet` object containing the rows that match your query.
+    - ```java
+        void queryPets(Connection conn, String findType) throws SQLException {
+            try (var preparedStatement = conn.prepareStatement("SELECT id, name, type FROM pet WHERE type=?")) {
+                preparedStatement.setString(1, findType);
+                try (var rs = preparedStatement.executeQuery()) {
+                    while (rs.next()) {
+                        var id = rs.getInt("id");
+                        var name = rs.getString("name");
+                        var type = rs.getString("type");
+
+                        System.out.printf("id: %d, name: %s, type: %s%n", id, name, type);
+                    }
+                }
+            }
+        }
+        ```
+- Text and Blob Types - for large text or binary data
+    - 
+
+### Securing Passwords
+- ```java
+    import org.mindrot.jbcrypt.BCrypt;
+
+    public class PasswordExample {
+
+        public static void main(String[] args) {
+            String secret = "toomanysecrets";
+            
+            // Hash a password for the first time
+            String hash = BCrypt.hashpw(secret, BCrypt.gensalt());
+
+            String[] candidates = {"cow", "toomanysecrets", "password"};
+            
+            for (var candidate : candidates) {
+                // Check if a plaintext candidate matches the stored hash
+                var match = BCrypt.checkpw(candidate, hash) ? "==" : "!=";
+
+                System.out.printf("Candidate: %-15s %s Stored Secret%n", candidate, match);
+            }
+        }
+    }
+    ```
+
+## Phase 4: Architectural Patterns
+- 

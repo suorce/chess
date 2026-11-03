@@ -45,9 +45,9 @@ public class GameService {
 
         GameData game = getGame(gameID);
         if ("WHITE".equals(playerColor) && game.whiteUsername() == null) {
-            return dataAccess.updateGame(playerName, playerColor, gameID);
+            return dataAccess.updateGame(playerName, "whiteUsername", gameID);
         } else if ("BLACK".equals(playerColor) && game.blackUsername() == null) {
-            return dataAccess.updateGame(playerName, playerColor, gameID);
+            return dataAccess.updateGame(playerName, "blackUsername", gameID);
         } else {
             throw new DataAccessException(DataAccessException.Code.AlreadyTaken);
         }
