@@ -56,4 +56,24 @@ public class MySqlDataAccessTests {
         assertTrue(dataAccess.listGames().isEmpty());
     }
 
+    @Test
+    @Order(3)
+    @DisplayName("Create User")
+    public void createUser() throws DataAccessException {
+        String passwordHashGurt = BCrypt.hashpw("passwordGURT", BCrypt.gensalt());
+        UserData userData = new UserData("gurt", passwordHashGurt, "gurt@email.com");
+        dataAccess.createUser(userData);
+        assertEquals(userData, dataAccess.getUser("gurt"));
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("Create Existing User")
+    public void createExistingUser() throws DataAccessException {
+        String passwordHashAlice = BCrypt.hashpw("password123", BCrypt.gensalt());
+        UserData userData = new UserData("alice", passwordHashAlice, "alice@email.com");
+        DataAccessException f = assertThrows(DataAccessException.class, () -> dataAccess.createUser(userData));
+        assertEquals(DataAccessException.Code.ServerError, f.code());   // AlreadyTaken (and others) handled in service, this is ServerError because it should NEVER happen
+    }
+
 }
