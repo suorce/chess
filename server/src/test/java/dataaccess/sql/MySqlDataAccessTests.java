@@ -93,5 +93,23 @@ public class MySqlDataAccessTests {
         assertNull(dataAccess.getUser("gurt"));
     }
 
+    @Test
+    @Order(7)
+    @DisplayName("Create Auth")
+    public void createAuth() throws DataAccessException {
+        AuthData authData = new AuthData("alice", "alice-token-2");
+        dataAccess.createAuth(authData);
+        assertEquals(authData, dataAccess.getAuth(authData.authToken()));
+    }
+
+    @Test
+    @Order(8)
+    @DisplayName("Create Auth With Duplicate Token")
+    public void createAuthDuplicateToken() throws DataAccessException {
+        AuthData authData = new AuthData("alice", "alice-token");
+        DataAccessException f = assertThrows(DataAccessException.class, () -> dataAccess.createAuth(authData));
+        assertEquals(DataAccessException.Code.ServerError, f.code());
+    }
+
 
 }
