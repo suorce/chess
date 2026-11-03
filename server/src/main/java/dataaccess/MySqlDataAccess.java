@@ -30,7 +30,7 @@ public class MySqlDataAccess implements DataAccess {
     public UserData createUser(UserData userData) throws DataAccessException {
         String statement = "INSERT INTO users (username, password, email) VALUES (?,?,?)";
         executeUpdate(statement, userData.username(), userData.password(), userData.email());
-        return userData;
+        return getUser(userData.username());
     }
 
     public UserData getUser(String username) throws DataAccessException {
@@ -62,7 +62,7 @@ public class MySqlDataAccess implements DataAccess {
     public AuthData createAuth(AuthData authData) throws DataAccessException {
         String statement = "INSERT INTO auth (username, authToken) VALUES (?,?)";
         executeUpdate(statement, authData.username(), authData.authToken());
-        return authData;
+        return getAuth(authData.authToken());
     }
 
     public AuthData getAuth(String authToken) throws DataAccessException {
@@ -142,7 +142,7 @@ public class MySqlDataAccess implements DataAccess {
         String statement = "INSERT INTO games (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?,?,?,?,?)";
         String gameString = new Gson().toJson(gameData.game(), ChessGame.class);
         executeUpdate(statement, gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameString);
-        return gameData;
+        return getGame(gameData.gameID());
     }
 
     private GameData readGame(ResultSet rs) throws SQLException {
