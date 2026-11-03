@@ -126,4 +126,19 @@ public class MySqlDataAccessTests {
         assertNull(dataAccess.getAuth("alice-token-fake"));
     }
 
+    @Test
+    @Order(11)
+    @DisplayName("Delete Auth")
+    public void deleteAuth() throws DataAccessException {
+        dataAccess.deleteAuth("alice-token");
+        assertNull(dataAccess.getAuth("alice-token"));
+    }
+
+    @Test
+    @Order(12)
+    @DisplayName("Delete Nonexistent Auth")
+    public void deleteNonexistentAuth() throws DataAccessException {
+        dataAccess.deleteAuth("alice-token-fake");
+        assertNull(dataAccess.getAuth("alice-token-fake"));
+    }
 }
