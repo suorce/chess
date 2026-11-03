@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import model.*;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
@@ -13,6 +14,47 @@ public class MySqlDataAccess implements DataAccess {
     public MySqlDataAccess() throws DataAccessException {
         configureDatabase();
     }
+
+    public void clear() {
+
+    }
+
+    public UserData createUser(UserData userData) {
+        return null;
+    }
+
+    public UserData getUser(String username) {
+        return null;
+    }
+
+    public AuthData createAuth(AuthData authData) {
+        return null;
+    }
+
+    public AuthData getAuth(String authToken) {
+        return null;
+    }
+
+    public void deleteAuth(String authToken) {
+
+    }
+
+    public GameData getGame(int gameID) {
+        return null;
+    }
+
+    public ArrayList<GameData> listGames() {
+        return null;
+    }
+
+    public GameData updateGame(String playerName, String playerColor, int gameID) {
+        return null;
+    }
+
+    public GameData createGame(GameData gameData) {
+        return null;
+    }
+
 
     private final String[] createStatements = {
             """
