@@ -176,4 +176,22 @@ public class MySqlDataAccessTests {
         assertEquals(gameData, dataAccess.getGame(2));
     }
 
+    @Test
+    @Order(17)
+    @DisplayName("Create Game")
+    public void createGame() throws DataAccessException {
+        GameData gameData = new GameData(3, null, null, "gameNEW", new ChessGame());
+        dataAccess.createGame(gameData);
+        assertEquals(gameData, dataAccess.getGame(3));
+    }
+
+    @Test
+    @Order(18)
+    @DisplayName("Create Game Duplicate ID")
+    public void createGameDuplicateID() throws DataAccessException {
+        GameData gameData = new GameData(2, null, null, "gameDUPLICATE", new ChessGame());
+        DataAccessException f = assertThrows(DataAccessException.class, () -> dataAccess.createGame(gameData));
+        assertEquals(DataAccessException.Code.ServerError, f.code());
+    }
+
 }
