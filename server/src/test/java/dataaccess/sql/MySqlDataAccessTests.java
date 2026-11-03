@@ -40,4 +40,20 @@ public class MySqlDataAccessTests {
         dataAccess.createGame(new GameData(2, "eve", null, "game2", new ChessGame()));
     }
 
+    @Test
+    @Order(1)
+    @DisplayName("Clear database, then get user")
+    public void clearDatabaseThenGetUser() throws DataAccessException {
+        dataAccess.clear();
+        assertNull(dataAccess.getUser("alice"));
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("Clear database, then list games")
+    public void clearDatabaseThenListGames() throws DataAccessException {
+        dataAccess.clear();
+        assertTrue(dataAccess.listGames().isEmpty());
+    }
+
 }
