@@ -66,8 +66,28 @@ public class MySqlDataAccess implements DataAccess {
         return authData;
     }
 
-    public AuthData getAuth(String authToken) {
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String statement = "SELECT * FROM auth WHERE authToken=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, authToken);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readAuth(rs);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.printf("Unable to read data: %s%n", e.getMessage());
+            throw new DataAccessException(DataAccessException.Code.ServerError);
+        }
         return null;
+    }
+
+    private AuthData readAuth(ResultSet rs) throws SQLException {
+        String username = rs.getString(1);
+        String authToken = rs.getString(2);
+        return new AuthData(username, authToken);
     }
 
     public void deleteAuth(String authToken) {
