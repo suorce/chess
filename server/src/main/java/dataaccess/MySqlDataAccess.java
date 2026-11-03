@@ -133,13 +133,7 @@ public class MySqlDataAccess implements DataAccess {
     }
 
     public GameData updateGame(String playerName, String playerColor, int gameID) throws DataAccessException {
-        String colorUsername;
-        if ("WHITE".equals(playerColor)) {
-            colorUsername = "whiteUsername";
-        } else {
-            colorUsername = "blackUsername";
-        }
-        String statement = String.format("UPDATE games SET %s=? WHERE gameID=?", colorUsername);
+        String statement = String.format("UPDATE games SET %s=? WHERE gameID=?", playerColor);
         executeUpdate(statement, playerName, gameID);
         return getGame(gameID);
     }
