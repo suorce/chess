@@ -41,6 +41,8 @@ public class MySqlDataAccess implements DataAccess {
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         return readUser(rs);
+                    } else {
+                        return null;
                     }
                 }
             }
@@ -48,7 +50,6 @@ public class MySqlDataAccess implements DataAccess {
             System.out.printf("Unable to read data: %s%n", e.getMessage());
             throw new DataAccessException(DataAccessException.Code.ServerError);
         }
-        return null;
     }
 
     private UserData readUser(ResultSet rs) throws SQLException {
@@ -72,6 +73,8 @@ public class MySqlDataAccess implements DataAccess {
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         return readAuth(rs);
+                    } else {
+                        return null;
                     }
                 }
             }
@@ -79,7 +82,6 @@ public class MySqlDataAccess implements DataAccess {
             System.out.printf("Unable to read data: %s%n", e.getMessage());
             throw new DataAccessException(DataAccessException.Code.ServerError);
         }
-        return null;
     }
 
     private AuthData readAuth(ResultSet rs) throws SQLException {
