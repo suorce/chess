@@ -156,4 +156,15 @@ public class MySqlDataAccessTests {
     public void getNonexistentGame() throws DataAccessException {
         assertNull(dataAccess.getGame(4));
     }
+
+    @Test
+    @Order(15)
+    @DisplayName("List Games")
+    public void listGames() throws DataAccessException {
+        var gamesList = new ArrayList<GameData>();
+        gamesList.add(new GameData(1, "alice", "bob", "game1", new ChessGame()));
+        gamesList.add(new GameData(2, "eve", null, "game2", new ChessGame()));
+        assertEquals(gamesList, dataAccess.listGames());
+    }
+
 }
