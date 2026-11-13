@@ -2044,5 +2044,148 @@
     }
     ```
 
-## Phase 4: Architectural Patterns
-- 
+## Client
+
+### Console UI
+- Terminal Control Codes
+    - terminal control codes (or escape sequences) can be used to do things like:
+        - Clear the terminal
+        - Set the cursor location
+        - Set the background color and text color for each character printed to the terminal
+        - Set text attributes such as bold, faint, italic, underline, blinking
+        - https://en.wikipedia.org/wiki/ANSI_escape_code
+    - public class EscapeSequences
+        - print unicode escape characters to control behavior - provided constants
+    - helpful hints
+        - ‘\n’ will color the remainder of the line using the current background color
+        - set the background color to the color you want the rest of the line to be before printing ‘\n’
+- Drawing the Chess Board
+    - unicode characters
+        - chess piece characters can be printed - defined in EscapeSequences
+        - wider than normal chars, will be harder to line up - use Em Space `\u2003` that has same width
+## Web Client
+- One way to create a web client is to use the `HttpClient` class from the standard JDK `java.net` library to make HTTP requests
+    - ```java
+        import java.net.URI;
+        import java.net.http.HttpClient;
+        import java.net.http.HttpRequest;
+        import java.net.http.HttpResponse;
+        import java.util.Locale;
+
+        public class SimpleNameClient {
+            // Create an HttpClient for making requests
+            // This should be long-lived and shared, so a static final field is good here
+            private static final HttpClient httpClient = HttpClient.newHttpClient();
+
+            public static void main(String[] args) throws Exception {
+                new SimpleNameClient().get("localhost", 8080, "/name");
+            }
+
+            private void get(String host, int port, String path) throws Exception {
+                String urlString = String.format(Locale.getDefault(), "http://%s:%d%s", host, port, path);
+
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(new URI(urlString))
+                        .timeout(java.time.Duration.ofMillis(5000))
+                        .GET()
+                        .build();
+
+                HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+                if (httpResponse.statusCode() >= 200 && httpResponse.statusCode() < 300) {
+                    System.out.println(httpResponse.body());
+                } else {
+                    System.out.println("Error: received status code " + httpResponse.statusCode());
+                }
+            }
+        }
+        ```
+    - check `response.statusCode()` method to check for error
+- using Http headers on client
+    - Request headers can be added to any request via the `header` method on `HttpRequest` builders. Response headers can be read via the `headers` method on `HttpResponse` objects.
+    - ```java
+        var request = HttpRequest.newBuilder(uri)
+            .GET()
+            .header("Authorization", "secret1")
+            .build();
+
+        var response = client.send(request, BodyHandlers.ofString());
+        var headers = response.headers();
+        OptionalLong length = response.firstValueAsLong("Content-Length");
+        Optional<String> type = response.firstValue("Content-Type");
+        ```
+- using BodyHandlers and BodyPublishers
+    - `client.send()` methods takes `BodyHandler` arg that determines type of `response.body()`
+    - different `BodyHandler` allow using body in different ways, the `BodyHandlers` class contains several facotry functions
+    - http methods that require a body take an additional `BodyPublisher` arg - like `BodyHandlers`, Publisher allow using different sources for body, and there is `BodyPublishers` class with factory functions
+    - ```java
+        var body = Map.of("name", "joe", "type", "cat");
+        var jsonBody = new Gson().toJson(body);
+
+        var request = HttpRequest.newBuilder(uri)
+            .POST(BodyPublishers.ofString(jsonBody))
+            .header("Content-Type", "application/json")
+            .build();
+        ```
+- Implementing a Simple Curl
+    - ```java
+        public class ClientCurlExample {
+            private static final HttpClient client = HttpClient.newHttpClient();
+
+            public static void main(String[] args) throws Exception {
+                if (args.length >= 2) {
+                    var method = args[0];
+                    var url = args[1];
+                    var body = args.length == 3 ? args[2] : null;
+
+                    HttpResponse<String> response = sendRequest(url, method, body);
+                    System.out.printf("= Request =========\n[%s] %s\n\n%s\n\n", method, url, body);
+                    receiveResponse(response);
+                } else {
+                    System.out.println("ClientCurlExample <method> <url> [<body>]");
+                }
+            }
+
+            private static HttpResponse<String> sendRequest(String url, String method, String body)
+                    throws InterruptedException, IOException {
+                var request = HttpRequest.newBuilder(URI.create(url))
+                        .method(method, requestBodyPublisher(body))
+                        .build();
+                return client.send(request, BodyHandlers.ofString());
+            }
+
+            private static BodyPublisher requestBodyPublisher(String body) throws IOException {
+                if (body != null) {
+                    return BodyPublishers.ofString(body);
+                } else {
+                    return BodyPublishers.noBody();
+                }
+            }
+
+            private static void receiveResponse(HttpResponse<String> response) {
+                var statusCode = response.statusCode();
+
+                var responseBody = new Gson().fromJson(response.body(), Map.class);
+                System.out.printf("= Response =========\n[%d]\n\n%s\n\n", statusCode, responseBody);
+            }
+        }
+        ```
+
+### Phase 5: Architectural Patterns
+- The Facade Pattern
+    - a simplified interface to a larger, more complex  body of code -- in this case, the entire HTTP communication layer and the Server's API
+    - acts as a translator - the rest of the client should not know it is talking to a server via HTTP, nor deal with JSON deserialization, headers, or status codes
+    - ex. UI calls method like `facade.login(username, password)` and Facade handles
+        - opening connection to server
+        - serializing req to JSON
+        - setting HTTP method (POST, GET, etc)
+        - parsing response
+        - mapping HTTP error codes to meaningful client-side exceptions
+- Managing State with the State Pattern
+    - CLI typically operates in REPL (Read-Eval-Print Loop), but cmds change depending on status
+    - can define different states for UI (SIGNEDOUT, SIGNEDIN, etc.) and main loop checks to determine which menu to display and which cmds to accept
+- Separation of Concerns: UI vs Data
+    - follow Separation of Concerns
+        - The Model: Represents the data (e.g., `GameData`, `AuthData`). These should be simple POJOs (Plain Old Java Objects).
+        - The View: Responsible for formatting. This is where you handle ANSI escape codes to color the chessboard or format the list of games into a readable table.
+        - The Controller: The logic that connects the UI to the `ServerFacade`
