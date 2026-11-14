@@ -46,6 +46,32 @@ public class ServerFacade {
         return null;
     }
 
+    private HttpRequest buildRequest(String method, String path, Object body) {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl + path))
+                .method(method, makeRequestBody(body));
+        if (body != null) {
+            request.setHeader("Content-Type", "application/json");
+        }
+        return request.build();
+    }
+
+    private BodyPublisher makeRequestBody(Object request) {
+        if (request != null) {
+            return BodyPublishers.ofString(new Gson().toJson(request));
+        } else {
+            return BodyPublishers.noBody();
+        }
+    }
+
+    private HttpResponse<String> sendRequest(HttpRequest request) throws DataAccessException {
+        try {
+            return client.send(request, BodyHandlers.ofString());
+        } catch (Exception ex) {
+            throw new DataAccessException(DataAccessException.Code.ServerError);
+        }
+    }
+
     private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws DataAccessException {
         var status = response.statusCode();
         if (!isSuccessful(status)) {
