@@ -13,9 +13,11 @@ import java.net.http.HttpResponse.BodyHandlers;
 public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
     private final String serverUrl;
+    private String authToken;
 
     public ServerFacade(String url) {
         serverUrl = url;
+        authToken = null;
     }
 
     public void clear() throws DataAccessException {
@@ -57,6 +59,9 @@ public class ServerFacade {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
+        if (authToken != null) {
+            request.header("Authorization", authToken);
+        }
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
         }
