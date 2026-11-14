@@ -23,16 +23,22 @@ public class ServerFacade {
         sendRequest(request);
     }
 
-    public AuthData register() throws DataAccessException {
-        return null;
+    public AuthData register(UserData userData) throws DataAccessException {
+        var request = buildRequest("POST", "/user", userData);
+        var response = sendRequest(request);
+        return handleResponse(response, AuthData.class);
     }
 
-    public AuthData login() throws DataAccessException {
-        return null;
+    public AuthData login(LoginRequest loginRequest) throws DataAccessException {
+        var request = buildRequest("POST", "/session", loginRequest);
+        var response = sendRequest(request);
+        return handleResponse(response, AuthData.class);
     }
 
     public void logout() throws DataAccessException {
-
+        var request = buildRequest("DELETE", "/session", null);
+        sendRequest(request);
+        authToken = null;
     }
 
     public ListGamesResponse listGames() throws DataAccessException {
