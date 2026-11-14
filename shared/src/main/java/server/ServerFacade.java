@@ -1,7 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-//import server.DataAccessException;
+import dataaccess.DataAccessException;
 import model.*;
 
 import java.net.*;
@@ -46,15 +46,15 @@ public class ServerFacade {
         return null;
     }
 
-    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ResponseException {
+    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws DataAccessException {
         var status = response.statusCode();
         if (!isSuccessful(status)) {
             var body = response.body();
             if (body != null) {
-                throw ResponseException.fromJson(body);
+                throw DataAccessException.fromJson(body);
             }
 
-            throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
+            throw new DataAccessException(DataAccessException.fromHttpStatusCode(status));
         }
 
         if (responseClass != null) {
