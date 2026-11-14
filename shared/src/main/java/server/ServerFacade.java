@@ -18,31 +18,32 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public void clear() throws Exception {
-
+    public void clear() throws DataAccessException {
+        var request = buildRequest("DELETE", "/db", null);
+        sendRequest(request);
     }
 
-    public AuthData register() throws Exception {
+    public AuthData register() throws DataAccessException {
         return null;
     }
 
-    public AuthData login() throws Exception {
+    public AuthData login() throws DataAccessException {
         return null;
     }
 
-    public void logout() throws Exception {
+    public void logout() throws DataAccessException {
 
     }
 
-    public ListGamesResponse listGames() throws Exception {
+    public ListGamesResponse listGames() throws DataAccessException {
         return null;
     }
 
-    public String createGame() throws Exception {
+    public String createGame() throws DataAccessException {
         return null;
     }
 
-    public GameData joinGame() throws Exception {
+    public GameData joinGame() throws DataAccessException {
         return null;
     }
 
