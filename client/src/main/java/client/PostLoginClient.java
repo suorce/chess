@@ -40,6 +40,18 @@ public class PostLoginClient implements Client {
         return String.valueOf(result);
     }
 
+    public void joinGame(String[] tokens) throws DataAccessException {
+        if (tokens.length != 3) {
+            throw new DataAccessException(DataAccessException.Code.BadRequest);
+        }
+        JoinGameRequest joinGameRequest = new JoinGameRequest(tokens[1], Integer.parseInt(tokens[2]));
+        facade.joinGame(joinGameRequest);
+    }
+
+    public String observeGame(String[] tokens) {
+        return "work on this later";
+    }
+
     @Override
     public void printPrompt() {
         System.out.print("\n" + "POSTLOGIN >>> ");
