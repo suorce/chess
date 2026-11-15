@@ -3,9 +3,11 @@ package client;
 import dataaccess.DataAccessException;
 import model.*;
 import server.ServerFacade;
+import java.util.HashMap;
 
 public class PostLoginClient implements Client {
     private final ServerFacade facade;
+    private HashMap<Integer, Integer> listToId = new HashMap<>();
 
     public PostLoginClient(ServerFacade facade) {
         this.facade = facade;
@@ -18,6 +20,24 @@ public class PostLoginClient implements Client {
         CreateGameRequest createGameRequest = new CreateGameRequest(tokens[1]);
         GameData.GameIDResponse gameIDResponse = facade.createGame(createGameRequest);
         return "Game " + tokens[1] + " created with id = " + gameIDResponse.gameID();
+    }
+
+    public String listGames() throws DataAccessException {
+        listToId.clear();
+        StringBuilder result = new StringBuilder();
+        int listNum = 1;
+        ListGamesResponse listGamesResponse = facade.listGames();
+        for (GameListItem game : listGamesResponse.games()) {
+            listToId.put(listNum, game.gameID());
+            result.append("\n   " +
+                    String.valueOf(listNum) + ". " +
+                    game.gameName() + ": " +
+                    game.whiteUsername() + " vs. " +
+                    game.blackUsername()
+            );
+            listNum += 1;
+        }
+        return String.valueOf(result);
     }
 
     @Override
