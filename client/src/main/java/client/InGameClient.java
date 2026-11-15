@@ -43,6 +43,61 @@ public class InGameClient implements Client {
         return result.toString();
     }
 
+    private String prettyPiece(ChessPiece piece) {
+        String result = "";
+        if (piece == null) {
+            result = EscapeSequences.EMPTY;
+        } else {
+            switch (piece.getTeamColor()) {
+                case WHITE -> {
+                    switch (piece.getPieceType()) {
+                        case KING -> {
+                            result = EscapeSequences.WHITE_KING;
+                        }
+                        case QUEEN -> {
+                            result = EscapeSequences.WHITE_QUEEN;
+                        }
+                        case BISHOP -> {
+                            result = EscapeSequences.WHITE_BISHOP;
+                        }
+                        case KNIGHT -> {
+                            result = EscapeSequences.WHITE_KNIGHT;
+                        }
+                        case ROOK -> {
+                            result = EscapeSequences.WHITE_ROOK;
+                        }
+                        case PAWN -> {
+                            result = EscapeSequences.WHITE_PAWN;
+                        }
+                    }
+                }
+                case BLACK -> {
+                    switch (piece.getPieceType()) {
+                        case KING -> {
+                            result = EscapeSequences.BLACK_KING;
+                        }
+                        case QUEEN -> {
+                            result = EscapeSequences.BLACK_QUEEN;
+                        }
+                        case BISHOP -> {
+                            result = EscapeSequences.BLACK_BISHOP;
+                        }
+                        case KNIGHT -> {
+                            result = EscapeSequences.BLACK_KNIGHT;
+                        }
+                        case ROOK -> {
+                            result = EscapeSequences.BLACK_ROOK;
+                        }
+                        case PAWN -> {
+                            result = EscapeSequences.BLACK_PAWN;
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
     @Override
     public void printPrompt() {
         System.out.print("\n" + "INGAME >>> ");
