@@ -52,6 +52,11 @@ public class PostLoginClient implements Client {
         return "work on this later";
     }
 
+    public String logout() throws DataAccessException {
+        facade.logout();
+        return "Logout Successful";
+    }
+
     @Override
     public void printPrompt() {
         System.out.print("\n" + "POSTLOGIN >>> ");
