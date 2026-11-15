@@ -16,6 +16,8 @@ public class InGameClient implements Client {
 
     @Override
     public String help() {
-        return "placeholder";
+        return """
+                 - no commands available, gameplay not implemented yet
+                """;
     }
 }

@@ -16,6 +16,13 @@ public class PostLoginClient implements Client {
 
     @Override
     public String help() {
-        return "placeholder";
+        return """
+                 - create <NAME> - a chess game
+                 - list - games
+                 - join <ID> [WHITE|BLACK] - a game
+                 - observe <ID> - a game
+                 - logout - of current session
+                 - help - see available commands
+                """;
     }
 }

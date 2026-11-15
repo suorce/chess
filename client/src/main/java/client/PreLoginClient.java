@@ -16,6 +16,11 @@ public class PreLoginClient implements Client {
 
     @Override
     public String help() {
-        return "placeholder";
+        return """
+                 - register <USERNAME> <PASSWORD> <EMAIL> - an account
+                 - login <USERNAME> <PASSWORD> - to existing account
+                 - quit - program
+                 - help - see available commands
+                """;
     }
 }
