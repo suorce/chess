@@ -44,11 +44,15 @@ public class ServerFacade {
     }
 
     public ListGamesResponse listGames() throws DataAccessException {
-        return null;
+        var request = buildRequest("GET", "/game", null);
+        var response = sendRequest(request);
+        return handleResponse(response, ListGamesResponse.class);
     }
 
-    public String createGame() throws DataAccessException {
-        return null;
+    public GameData.GameIDResponse createGame(CreateGameRequest createGameRequest) throws DataAccessException {
+        var request = buildRequest("POST", "/game", createGameRequest);
+        var response = sendRequest(request);
+        return handleResponse(response, GameData.GameIDResponse.class);
     }
 
     public GameData joinGame() throws DataAccessException {
