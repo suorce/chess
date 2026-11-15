@@ -13,7 +13,7 @@ public class Repl {
         facade = new ServerFacade(serverUrl);
         preLoginClient = new PreLoginClient(facade);
         postLoginClient = new PostLoginClient(facade);
-        inGameClient = new inGameClient(facade);
+        inGameClient = new InGameClient(facade);
     }
 
     public void run() {
