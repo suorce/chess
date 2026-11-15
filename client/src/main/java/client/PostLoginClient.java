@@ -10,11 +10,6 @@ public class PostLoginClient implements Client {
     }
 
     @Override
-    public State run() {
-        return State.PRELOGIN;
-    }
-
-    @Override
     public String help() {
         return """
                  - create <NAME> - a chess game

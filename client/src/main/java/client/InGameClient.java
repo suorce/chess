@@ -10,11 +10,6 @@ public class InGameClient implements Client {
     }
 
     @Override
-    public State run() {
-        return State.POSTLOGIN;
-    }
-
-    @Override
     public String help() {
         return """
                  - no commands available, gameplay not implemented yet

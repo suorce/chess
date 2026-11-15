@@ -17,15 +17,36 @@ public class Repl {
     }
 
     public void run() {
-        state = preLoginClient.run();
+        System.out.println(" Welcome to the Chess game. Type `help` to start.");
         while (true) {
             switch (state) {
                 case QUIT -> { return; }
-                case PRELOGIN -> state = preLoginClient.run();
-                case POSTLOGIN -> state = postLoginClient.run();
-                case INGAME -> state = inGameClient.run();
+                case PRELOGIN -> state = preLoginLoop();
+                case POSTLOGIN -> state = postLoginLoop();
+                case INGAME -> state = inGameLoop();
             }
         }
+    }
+
+    private State preLoginLoop() {
+        while (state == State.PRELOGIN) {
+
+        }
+        return state;
+    }
+
+    private State postLoginLoop() {
+        while (state == State.POSTLOGIN) {
+
+        }
+        return state;
+    }
+
+    private State inGameLoop() {
+        while (state == State.INGAME) {
+
+        }
+        return state;
     }
 
 }

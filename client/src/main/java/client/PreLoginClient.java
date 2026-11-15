@@ -10,11 +10,6 @@ public class PreLoginClient implements Client {
     }
 
     @Override
-    public State run() {
-        return State.QUIT;
-    }
-
-    @Override
     public String help() {
         return """
                  - register <USERNAME> <PASSWORD> <EMAIL> - an account
