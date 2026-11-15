@@ -21,32 +21,29 @@ public class Repl {
         while (true) {
             switch (state) {
                 case QUIT -> { return; }
-                case PRELOGIN -> state = preLoginLoop();
-                case POSTLOGIN -> state = postLoginLoop();
-                case INGAME -> state = inGameLoop();
+                case PRELOGIN -> preLoginLoop();
+                case POSTLOGIN -> postLoginLoop();
+                case INGAME -> inGameLoop();
             }
         }
     }
 
-    private State preLoginLoop() {
+    private void preLoginLoop() {
         while (state == State.PRELOGIN) {
 
         }
-        return state;
     }
 
-    private State postLoginLoop() {
+    private void postLoginLoop() {
         while (state == State.POSTLOGIN) {
 
         }
-        return state;
     }
 
-    private State inGameLoop() {
+    private void inGameLoop() {
         while (state == State.INGAME) {
 
         }
-        return state;
     }
 
 }
