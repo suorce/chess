@@ -53,6 +53,7 @@ public class Repl {
                 case "join" -> state = postLoginClient.joinGame(tokens);
                 case "observe" -> state = postLoginClient.observeGame(tokens);
                 case "logout" -> state = postLoginClient.logout();
+                case "quit" -> state = State.QUIT;
                 case "help" -> System.out.println(postLoginClient.help());
             }
         }
@@ -62,8 +63,10 @@ public class Repl {
         while (state == State.INGAME) {
             String[] tokens = getInput(scanner, inGameClient);
             switch (tokens[0]) {
-                "draw" -> inGameClient.drawBoard();
-                "exit" -> state = inGameClient.exitGame();
+                case "draw" -> inGameClient.drawBoard();
+                case "exit" -> state = inGameClient.exitGame();
+                case "quit" -> state = State.QUIT;
+                case "help" -> System.out.println(inGameClient.help());
             }
         }
     }
