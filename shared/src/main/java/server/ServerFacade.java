@@ -39,7 +39,8 @@ public class ServerFacade {
 
     public void logout() throws DataAccessException {
         var request = buildRequest("DELETE", "/session", null);
-        sendRequest(request);
+        var response = sendRequest(request);
+        handleResponse(response, null);
         authToken = null;
     }
 
@@ -55,8 +56,10 @@ public class ServerFacade {
         return handleResponse(response, GameData.GameIDResponse.class);
     }
 
-    public GameData joinGame() throws DataAccessException {
-        return null;
+    public void joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
+        var request = buildRequest("PUT", "/game", joinGameRequest);
+        var response = sendRequest(request);
+        handleResponse(response, null);
     }
 
     private HttpRequest buildRequest(String method, String path, Object body) {
