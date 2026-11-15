@@ -34,13 +34,27 @@ public class Repl {
 
     private void preLoginLoop(Scanner scanner) {
         while (state == State.PRELOGIN) {
-
+            String[] tokens = getInput(scanner, preLoginClient);
+            switch (tokens[0]) {
+                case "register" -> state = preLoginClient.register(tokens);
+                case "login" -> state = preLoginClient.login(tokens);
+                case "quit" -> state = State.QUIT;
+                case "help" -> System.out.println(preLoginClient.help());
+            }
         }
     }
 
     private void postLoginLoop(Scanner scanner) {
         while (state == State.POSTLOGIN) {
-
+            String[] tokens = getInput(scanner, postLoginClient);
+            switch (tokens[0]) {
+                case "create" -> postLoginClient.createGame(tokens);
+                case "list" -> postLoginClient.listGames();
+                case "join" -> state = postLoginClient.joinGame(tokens);
+                case "observe" -> state = postLoginClient.observeGame(tokens);
+                case "logout" -> state = postLoginClient.logout();
+                case "help" -> System.out.println(postLoginClient.help());
+            }
         }
     }
 
