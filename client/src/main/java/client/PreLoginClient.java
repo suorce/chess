@@ -10,6 +10,11 @@ public class PreLoginClient implements Client {
     }
 
     @Override
+    public void printPrompt() {
+        System.out.print("\n" + "PRELOGIN >>> ");
+    }
+
+    @Override
     public String help() {
         return """
                  - register <USERNAME> <PASSWORD> <EMAIL> - an account

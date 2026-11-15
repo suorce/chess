@@ -10,6 +10,11 @@ public class PostLoginClient implements Client {
     }
 
     @Override
+    public void printPrompt() {
+        System.out.print("\n" + "POSTLOGIN >>> ");
+    }
+
+    @Override
     public String help() {
         return """
                  - create <NAME> - a chess game

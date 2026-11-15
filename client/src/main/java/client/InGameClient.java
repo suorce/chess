@@ -10,6 +10,11 @@ public class InGameClient implements Client {
     }
 
     @Override
+    public void printPrompt() {
+        System.out.print("\n" + "INGAME >>> ");
+    }
+
+    @Override
     public String help() {
         return """
                  - no commands available, gameplay not implemented yet
