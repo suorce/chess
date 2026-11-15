@@ -37,14 +37,15 @@ public class PostLoginClient implements Client {
             );
             listNum += 1;
         }
-        return String.valueOf(result);
+        return result.toString();
     }
 
     public String joinGame(String[] tokens) throws DataAccessException {
         if (tokens.length != 3) {
             throw new DataAccessException(DataAccessException.Code.BadRequest);
         }
-        JoinGameRequest joinGameRequest = new JoinGameRequest(tokens[1], Integer.parseInt(tokens[2]));
+        int gameID = listToId.get(Integer.parseInt(tokens[1]));
+        JoinGameRequest joinGameRequest = new JoinGameRequest(tokens[2], gameID);
         facade.joinGame(joinGameRequest);
         return "Join Game Successful";
     }
