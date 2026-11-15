@@ -28,13 +28,17 @@ public class ServerFacade {
     public AuthData register(UserData userData) throws DataAccessException {
         var request = buildRequest("POST", "/user", userData);
         var response = sendRequest(request);
-        return handleResponse(response, AuthData.class);
+        AuthData authData = handleResponse(response, AuthData.class);
+        authToken = authData.authToken();
+        return authData;
     }
 
     public AuthData login(LoginRequest loginRequest) throws DataAccessException {
         var request = buildRequest("POST", "/session", loginRequest);
         var response = sendRequest(request);
-        return handleResponse(response, AuthData.class);
+        AuthData authData = handleResponse(response, AuthData.class);
+        authToken = authData.authToken();
+        return authData;
     }
 
     public void logout() throws DataAccessException {
