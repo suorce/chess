@@ -1,5 +1,7 @@
 package client;
 
+import dataaccess.DataAccessException;
+import model.*;
 import server.ServerFacade;
 
 public class PreLoginClient implements Client {
@@ -7,6 +9,24 @@ public class PreLoginClient implements Client {
 
     public PreLoginClient(ServerFacade facade) {
         this.facade = facade;
+    }
+
+    public String register(String[] tokens) throws DataAccessException {
+        if (tokens.length != 4) {
+            throw new DataAccessException(DataAccessException.Code.BadRequest);
+        }
+        UserData userData = new UserData(tokens[1], tokens[2], tokens[3]);
+        AuthData authData = facade.register(userData);
+        return "Logged in as " + authData.username();
+    }
+
+    public String login(String[] tokens) throws DataAccessException {
+        if (tokens.length != 3) {
+            throw new DataAccessException(DataAccessException.Code.BadRequest);
+        }
+        LoginRequest loginRequest = new LoginRequest(tokens[1], tokens[2]);
+        AuthData authData = facade.login(loginRequest);
+        return "Logged in as " + authData.username();
     }
 
     @Override
