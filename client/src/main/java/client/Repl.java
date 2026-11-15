@@ -7,6 +7,7 @@ public class Repl {
     private final PreLoginClient preLoginClient;
     private final PostLoginClient postLoginClient;
     private final InGameClient inGameClient;
+    private State state = State.PRELOGIN;
 
     public Repl(String serverUrl) {
         facade = new ServerFacade(serverUrl);
