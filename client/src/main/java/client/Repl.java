@@ -60,7 +60,11 @@ public class Repl {
 
     private void inGameLoop(Scanner scanner) {
         while (state == State.INGAME) {
-
+            String[] tokens = getInput(scanner, inGameClient);
+            switch (tokens[0]) {
+                "draw" -> inGameClient.drawBoard();
+                "exit" -> state = inGameClient.exitGame();
+            }
         }
     }
 
