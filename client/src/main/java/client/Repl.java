@@ -1,5 +1,6 @@
 package client;
 
+import dataaccess.DataAccessException;
 import server.ServerFacade;
 
 import java.util.Scanner;
@@ -34,39 +35,69 @@ public class Repl {
 
     private void preLoginLoop(Scanner scanner) {
         while (state == State.PRELOGIN) {
-            String[] tokens = getInput(scanner, preLoginClient);
-            switch (tokens[0]) {
-                case "register" -> state = preLoginClient.register(tokens);
-                case "login" -> state = preLoginClient.login(tokens);
-                case "quit" -> state = State.QUIT;
-                case "help" -> System.out.println(preLoginClient.help());
+            try {
+                String[] tokens = getInput(scanner, preLoginClient);
+                switch (tokens[0]) {
+                    case "register" -> {
+                        System.out.println(preLoginClient.register(tokens));
+                        state = State.POSTLOGIN;
+                    }
+                    case "login" -> {
+                        System.out.println(preLoginClient.login(tokens));
+                        state = State.POSTLOGIN;
+                    }
+                    case "quit" -> state = State.QUIT;
+                    default -> System.out.println(preLoginClient.help());
+                }
+            } catch (DataAccessException ex){
+                System.out.println(ex.message());
             }
         }
     }
 
     private void postLoginLoop(Scanner scanner) {
         while (state == State.POSTLOGIN) {
-            String[] tokens = getInput(scanner, postLoginClient);
-            switch (tokens[0]) {
-                case "create" -> postLoginClient.createGame(tokens);
-                case "list" -> postLoginClient.listGames();
-                case "join" -> state = postLoginClient.joinGame(tokens);
-                case "observe" -> state = postLoginClient.observeGame(tokens);
-                case "logout" -> state = postLoginClient.logout();
-                case "quit" -> state = State.QUIT;
-                case "help" -> System.out.println(postLoginClient.help());
+            try {
+                String[] tokens = getInput(scanner, postLoginClient);
+                switch (tokens[0]) {
+                    case "create" -> System.out.println(postLoginClient.createGame(tokens));
+                    case "list" -> System.out.println(postLoginClient.listGames());
+                    case "join" -> {
+                        System.out.println(postLoginClient.joinGame(tokens));
+                        state = State.INGAME;
+                    }
+                    case "observe" -> {
+                        System.out.println(postLoginClient.observeGame(tokens));
+                        state = State.INGAME;
+                    }
+                    case "logout" -> {
+                        System.out.println(postLoginClient.logout());
+                        state = State.PRELOGIN;
+                    }
+                    case "quit" -> state = State.QUIT;
+                    default -> System.out.println(postLoginClient.help());
+                }
+            } catch (DataAccessException ex){
+                System.out.println(ex.message());
             }
         }
     }
 
     private void inGameLoop(Scanner scanner) {
         while (state == State.INGAME) {
-            String[] tokens = getInput(scanner, inGameClient);
-            switch (tokens[0]) {
-                case "draw" -> inGameClient.drawBoard();
-                case "exit" -> state = inGameClient.exitGame();
-                case "quit" -> state = State.QUIT;
-                case "help" -> System.out.println(inGameClient.help());
+            try {
+                String[] tokens = getInput(scanner, inGameClient);
+                switch (tokens[0]) {
+                    case "draw" -> System.out.println(inGameClient.drawBoard());
+                    case "exit" -> {
+                        System.out.println(inGameClient.exitGame());
+                        state = State.POSTLOGIN;
+                    }
+                    case "quit" -> state = State.QUIT;
+                    default -> System.out.println(inGameClient.help());
+                }
+            } catch (DataAccessException ex){
+                System.out.println(ex.message());
             }
         }
     }
