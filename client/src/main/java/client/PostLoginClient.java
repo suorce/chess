@@ -1,5 +1,7 @@
 package client;
 
+import dataaccess.DataAccessException;
+import model.*;
 import server.ServerFacade;
 
 public class PostLoginClient implements Client {
@@ -7,6 +9,15 @@ public class PostLoginClient implements Client {
 
     public PostLoginClient(ServerFacade facade) {
         this.facade = facade;
+    }
+
+    public String createGame(String[] tokens) throws DataAccessException {
+        if (tokens.length != 2) {
+            throw new DataAccessException(DataAccessException.Code.BadRequest);
+        }
+        CreateGameRequest createGameRequest = new CreateGameRequest(tokens[1]);
+        GameData.GameIDResponse gameIDResponse = facade.createGame(createGameRequest);
+        return "Game " + tokens[1] + " created with id = " + gameIDResponse.gameID();
     }
 
     @Override
