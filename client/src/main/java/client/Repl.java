@@ -15,4 +15,17 @@ public class Repl {
         postLoginClient = new PostLoginClient(facade);
         inGameClient = new inGameClient(facade);
     }
+
+    public void run() {
+        state = preLoginClient.run();
+        while (true) {
+            switch (state) {
+                case QUIT -> { return; }
+                case PRELOGIN -> state = preLoginClient.run();
+                case POSTLOGIN -> state = postLoginClient.run();
+                case INGAME -> state = inGameClient.run();
+            }
+        }
+    }
+
 }
