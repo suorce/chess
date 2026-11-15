@@ -63,7 +63,7 @@ public class Repl {
                     case "create" -> System.out.println(postLoginClient.createGame(tokens));
                     case "list" -> System.out.println(postLoginClient.listGames());
                     case "join" -> {
-                        postLoginClient.joinGame(tokens);
+                        System.out.println(postLoginClient.joinGame(tokens));
                         state = State.INGAME;
                     }
                     case "observe" -> {
