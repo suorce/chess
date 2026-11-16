@@ -5,7 +5,6 @@ import dataaccess.DataAccessException;
 import java.util.Scanner;
 
 public class Repl {
-    private final ServerFacade facade;
     private final PreLoginClient preLoginClient;
     private final PostLoginClient postLoginClient;
     private final InGameClient inGameClient;
@@ -13,7 +12,7 @@ public class Repl {
     private String perspective;
 
     public Repl(String serverUrl) {
-        facade = new ServerFacade(serverUrl);
+        ServerFacade facade = new ServerFacade(serverUrl);
         preLoginClient = new PreLoginClient(facade);
         postLoginClient = new PostLoginClient(facade);
         inGameClient = new InGameClient(facade);

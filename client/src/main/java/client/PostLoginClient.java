@@ -64,8 +64,15 @@ public class PostLoginClient implements Client {
         return "Successfully joined game " + gameID + " as " + tokens[2];
     }
 
-    public String observeGame(String[] tokens) {
-        return "work on this later";
+    public String observeGame(String[] tokens) throws DataAccessException {
+        if (tokens.length != 2) {
+            throw new DataAccessException(DataAccessException.Code.BadRequest);
+        }
+        if (!listToId.containsKey(Integer.parseInt(tokens[1]))) {
+            throw new DataAccessException(DataAccessException.Code.BadRequest);
+        }
+        int gameID = listToId.get(Integer.parseInt(tokens[1]));
+        return "Observing game " + gameID;
     }
 
     public String logout() throws DataAccessException {
