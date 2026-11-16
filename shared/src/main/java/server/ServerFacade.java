@@ -22,7 +22,8 @@ public class ServerFacade {
 
     public void clear() throws DataAccessException {
         var request = buildRequest("DELETE", "/db", null);
-        sendRequest(request);
+        var response = sendRequest(request);
+        handleResponse(response, null);
     }
 
     public AuthData register(UserData userData) throws DataAccessException {
