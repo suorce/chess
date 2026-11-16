@@ -29,12 +29,15 @@ public class InGameClient implements Client {
         result.append("\n");
 
         colLabel.append("  ");
+        for (int col = j; col != i-inc; col -= inc) {
+            char letter = (char) ('a' + col - 1);
+            colLabel.append(" " + letter + "\u2003");
+        }
+        result.append(colLabel).append("\n");
+
         for (int row = i; row != j+inc; row += inc) {
             result.append(String.valueOf(row) + " ");
             for (int col = j; col != i-inc; col -= inc) {
-                if (row == 1) {
-                    colLabel.append(String.valueOf(col) + "\u2003" + " ");
-                }
                 ChessPiece piece = board.getPiece(new ChessPosition(row,col));
                 if ((row + col) % 2 == 0) {
                     result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
@@ -43,8 +46,10 @@ public class InGameClient implements Client {
                 }
                 result.append(prettyPiece(piece));
             }
-            result.append(EscapeSequences.RESET_BG_COLOR);
-            result.append("\n");
+            result.append(EscapeSequences.RESET_BG_COLOR)
+                    .append(" ")
+                    .append(String.valueOf(row))
+                    .append("\n");
         }
         result.append(colLabel);
         return result.toString();
@@ -56,32 +61,16 @@ public class InGameClient implements Client {
             result.append(EscapeSequences.EMPTY);
         } else {
             switch (piece.getTeamColor()) {
-                case WHITE -> {
-                    result.append(EscapeSequences.SET_TEXT_COLOR_WHITE);
-                }
-                case BLACK -> {
-                    result.append(EscapeSequences.SET_TEXT_COLOR_BLACK);
-                }
+                case WHITE -> result.append(EscapeSequences.SET_TEXT_COLOR_WHITE);
+                case BLACK -> result.append(EscapeSequences.SET_TEXT_COLOR_BLACK);
             }
             switch (piece.getPieceType()) {
-                case KING -> {
-                    result.append(EscapeSequences.BLACK_KING);
-                }
-                case QUEEN -> {
-                    result.append(EscapeSequences.BLACK_QUEEN);
-                }
-                case BISHOP -> {
-                    result.append(EscapeSequences.BLACK_BISHOP);
-                }
-                case KNIGHT -> {
-                    result.append(EscapeSequences.BLACK_KNIGHT);
-                }
-                case ROOK -> {
-                    result.append(EscapeSequences.BLACK_ROOK);
-                }
-                case PAWN -> {
-                    result.append(EscapeSequences.BLACK_PAWN);
-                }
+                case KING -> result.append(EscapeSequences.BLACK_KING);
+                case QUEEN -> result.append(EscapeSequences.BLACK_QUEEN);
+                case BISHOP -> result.append(EscapeSequences.BLACK_BISHOP);
+                case KNIGHT -> result.append(EscapeSequences.BLACK_KNIGHT);
+                case ROOK -> result.append(EscapeSequences.BLACK_ROOK);
+                case PAWN -> result.append(EscapeSequences.BLACK_PAWN);
             }
         }
         result.append(EscapeSequences.RESET_TEXT_COLOR);
@@ -96,7 +85,9 @@ public class InGameClient implements Client {
     @Override
     public String help() {
         return """
-                 - no commands available, gameplay not implemented yet
+                 - draw - the board
+                 - exit - the game
+                 - quit - the application
                 """;
     }
 }
