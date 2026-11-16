@@ -54,4 +54,26 @@ public class ServerFacadeTests {
         );
         assertEquals(DataAccessException.Code.Unauthorized, ex.code());
     }
+
+    @Test
+    @DisplayName("Register User")
+    public void register() throws DataAccessException {
+        AuthData authData = facade.register(
+                new UserData("eve", "password789", "eve@email.com")
+        );
+        assertEquals("eve", authData.username());
+        assertNotNull(authData.authToken());
+    }
+
+    @Test
+    @DisplayName("Register Existing User")
+    public void registerExistingUser() {
+        DataAccessException ex = assertThrows(
+                DataAccessException.class,
+                () -> facade.register(
+                        new UserData("alice", "password123", "alice2@email.com")
+                )
+        );
+        assertEquals(DataAccessException.Code.AlreadyTaken, ex.code());
+    }
 }
