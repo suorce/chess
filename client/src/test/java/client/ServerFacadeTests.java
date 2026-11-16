@@ -162,4 +162,31 @@ public class ServerFacadeTests {
         );
         assertEquals(DataAccessException.Code.Unauthorized, ex.code());
     }
+
+    // createGame
+
+    @Test
+    @DisplayName("Create Game")
+    public void createGame() throws DataAccessException {
+        facade.login(new LoginRequest("alice", "password123"));
+        GameData.GameIDResponse response = facade.createGame(
+                new CreateGameRequest("game1")
+        );
+        assertTrue(response.gameID() > 0);  // verify gameID returned
+
+        ListGamesResponse games = facade.listGames();   // verify list size, gameID, name
+        assertEquals(1, games.games().size());
+        assertEquals(response.gameID(), games.games().get(0).gameID());
+        assertEquals("game1", games.games().get(0).gameName());
+    }
+
+    @Test
+    @DisplayName("Create Game Without Authentication")
+    public void createGameUnauthorized() {
+        DataAccessException ex = assertThrows(
+                DataAccessException.class,
+                () -> facade.createGame(new CreateGameRequest("game1"))
+        );
+        assertEquals(DataAccessException.Code.Unauthorized, ex.code());
+    }
 }
