@@ -66,7 +66,7 @@ public class Repl {
                     case "list" -> System.out.println(postLoginClient.listGames());
                     case "join" -> {
                         System.out.println(postLoginClient.joinGame(tokens));
-                        perspective = tokens[1];
+                        perspective = tokens[2];
                         state = State.INGAME;
                     }
                     case "observe" -> {

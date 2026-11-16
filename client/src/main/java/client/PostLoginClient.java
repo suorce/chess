@@ -19,7 +19,7 @@ public class PostLoginClient implements Client {
         }
         CreateGameRequest createGameRequest = new CreateGameRequest(tokens[1]);
         GameData.GameIDResponse gameIDResponse = facade.createGame(createGameRequest);
-        return "Game " + tokens[1] + " created with id = " + gameIDResponse.gameID();
+        return "Game created with name = " + tokens[1];
     }
 
     public String listGames() throws DataAccessException {
@@ -47,7 +47,7 @@ public class PostLoginClient implements Client {
         int gameID = listToId.get(Integer.parseInt(tokens[1]));
         JoinGameRequest joinGameRequest = new JoinGameRequest(tokens[2], gameID);
         facade.joinGame(joinGameRequest);
-        return "Join Game Successful";
+        return "Successfully joined game " + gameID + " as " + tokens[2];
     }
 
     public String observeGame(String[] tokens) {
