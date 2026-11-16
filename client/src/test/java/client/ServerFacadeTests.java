@@ -28,10 +28,16 @@ public class ServerFacadeTests {
         server.stop();
     }
 
+    @BeforeEach
+    void setUp() throws DataAccessException {
+        facade = new ServerFacade(serverUrl);
+        facade.clear();
 
-    @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
+        facade.register(new UserData("alice", "password123", "alice@email.com"));
+        facade.logout();
+
+        bobFacade = new ServerFacade(serverUrl);
+        bobFacade.register(new UserData("bob", "password456", "bob@email.com"));
+        bobFacade.logout();
     }
-
 }
