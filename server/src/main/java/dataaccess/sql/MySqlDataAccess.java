@@ -141,11 +141,12 @@ public class MySqlDataAccess implements DataAccess {
         return getGame(gameID);
     }
 
-    public GameData createGame(GameData gameData) throws DataAccessException {
-        String statement = "INSERT INTO games (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?,?,?,?,?)";
-        String gameString = new Gson().toJson(gameData.game(), ChessGame.class);
-        executeUpdate(statement, gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameString);
-        return getGame(gameData.gameID());
+    public GameData createGame(String gameName) throws DataAccessException {
+        String statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, game) VALUES (?,?,?,?)";
+        ChessGame chessGame = new ChessGame();
+        String gameString = new Gson().toJson(chessGame, ChessGame.class);
+        int gameID = executeUpdate(statement, null, null, gameName, gameString);
+        return getGame(gameID);
     }
 
     private GameData readGame(ResultSet rs) throws SQLException {

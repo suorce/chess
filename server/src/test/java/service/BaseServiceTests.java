@@ -38,7 +38,10 @@ public abstract class BaseServiceTests {
     }
 
     private void createTestGames() throws DataAccessException {
-        dataAccess.createGame(new GameData(1, "alice", "bob", "game1", new ChessGame()));
-        dataAccess.createGame(new GameData(2, "eve", null, "game2", new ChessGame()));
+        dataAccess.createGame("game1");
+        dataAccess.updateGame("alice", "whiteUsername", 1);
+        dataAccess.updateGame("bob", "blackUsername", 1);
+        dataAccess.createGame("game2");
+        dataAccess.updateGame("eve", "whiteUsername", 2);
     }
 }

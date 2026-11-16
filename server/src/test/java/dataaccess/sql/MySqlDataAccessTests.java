@@ -35,8 +35,12 @@ public class MySqlDataAccessTests {
         dataAccess.createUser(new UserData("ferb", passwordHashFerb, "ferb@email.com"));
         dataAccess.createAuth(new AuthData("ferb", "ferb-token"));
 
-        dataAccess.createGame(new GameData(1, "alice", "bob", "game1", new ChessGame()));
-        dataAccess.createGame(new GameData(2, "eve", null, "game2", new ChessGame()));
+        GameData game1 = dataAccess.createGame("game1");
+        dataAccess.updateGame("alice", "whiteUsername", game1.gameID());
+        dataAccess.updateGame("bob", "blackUsername", game1.gameID());
+
+        GameData game2 = dataAccess.createGame("game2");
+        dataAccess.updateGame("eve", "whiteUsername", game2.gameID());
     }
 
     @Test
@@ -181,17 +185,7 @@ public class MySqlDataAccessTests {
     @DisplayName("Create Game")
     public void createGame() throws DataAccessException {
         GameData gameData = new GameData(3, null, null, "gameNEW", new ChessGame());
-        dataAccess.createGame(gameData);
+        dataAccess.createGame("gameNEW");
         assertEquals(gameData, dataAccess.getGame(3));
     }
-
-    @Test
-    @Order(18)
-    @DisplayName("Create Game Duplicate ID")
-    public void createGameDuplicateID() throws DataAccessException {
-        GameData gameData = new GameData(2, null, null, "gameDUPLICATE", new ChessGame());
-        DataAccessException f = assertThrows(DataAccessException.class, () -> dataAccess.createGame(gameData));
-        assertEquals(DataAccessException.Code.ServerError, f.code());
-    }
-
 }
