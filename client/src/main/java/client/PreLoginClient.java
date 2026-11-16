@@ -2,7 +2,6 @@ package client;
 
 import dataaccess.DataAccessException;
 import model.*;
-import server.ServerFacade;
 
 public class PreLoginClient implements Client {
     private final ServerFacade facade;

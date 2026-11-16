@@ -1,10 +1,7 @@
 package client;
 
 import chess.*;
-import model.*;
-import server.ServerFacade;
 import ui.EscapeSequences;
-
 import java.util.Objects;
 
 public class InGameClient implements Client {

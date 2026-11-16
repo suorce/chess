@@ -1,7 +1,6 @@
 package client;
 
 import dataaccess.DataAccessException;
-import server.ServerFacade;
 
 import java.util.Scanner;
 

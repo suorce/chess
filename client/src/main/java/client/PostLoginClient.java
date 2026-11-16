@@ -2,7 +2,6 @@ package client;
 
 import dataaccess.DataAccessException;
 import model.*;
-import server.ServerFacade;
 import java.util.HashMap;
 import java.util.List;
 
