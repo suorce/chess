@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameService {
-    private int gameID = 1;
     private final DataAccess dataAccess;
     private final AuthService authService;
 
@@ -55,14 +54,6 @@ public class GameService {
 
     public GameData createGame(String authToken, String gameName) throws DataAccessException {
         authService.requireAuth(authToken);
-        GameData gameData = new GameData(gameID++, null, null, gameName, new ChessGame());
-        return dataAccess.createGame(gameData);
+        return dataAccess.createGame(gameName);
     }
-
-//    ONLY FOR TESTING
-
-    public void incrementGameIDForTesting() {
-        gameID++;
-    }
-
 }

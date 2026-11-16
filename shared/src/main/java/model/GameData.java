@@ -27,4 +27,6 @@ public record GameData(int gameID, String whiteUsername, String blackUsername, S
     public String gameIDJson() {
         return new Gson().toJson(Map.of("gameID", gameID));
     }
+
+    public record GameIDResponse(int gameID) {};
 }

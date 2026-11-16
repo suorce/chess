@@ -99,7 +99,7 @@ public class Server {
         String authToken = ctx.header("Authorization");
         JoinGameRequest joinGameRequest = new Gson().fromJson(ctx.body(), JoinGameRequest.class);
         jsonToObjectCheck(joinGameRequest);
-        GameData gameData = service.updateGame(authToken, joinGameRequest);
+        service.updateGame(authToken, joinGameRequest);
         ctx.status(200);
     }
 

@@ -1,0 +1,121 @@
+package client;
+
+import com.google.gson.Gson;
+import dataaccess.DataAccessException;
+import model.*;
+
+import java.net.*;
+import java.net.http.*;
+import java.net.http.HttpRequest.BodyPublisher;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse.BodyHandlers;
+
+public class ServerFacade {
+    private final HttpClient client = HttpClient.newHttpClient();
+    private final String serverUrl;
+    private String authToken;
+
+    public ServerFacade(String url) {
+        serverUrl = url;
+        authToken = null;
+    }
+
+    public void clear() throws DataAccessException {
+        var request = buildRequest("DELETE", "/db", null);
+        var response = sendRequest(request);
+        handleResponse(response, null);
+    }
+
+    public AuthData register(UserData userData) throws DataAccessException {
+        var request = buildRequest("POST", "/user", userData);
+        var response = sendRequest(request);
+        AuthData authData = handleResponse(response, AuthData.class);
+        authToken = authData.authToken();
+        return authData;
+    }
+
+    public AuthData login(LoginRequest loginRequest) throws DataAccessException {
+        var request = buildRequest("POST", "/session", loginRequest);
+        var response = sendRequest(request);
+        AuthData authData = handleResponse(response, AuthData.class);
+        authToken = authData.authToken();
+        return authData;
+    }
+
+    public void logout() throws DataAccessException {
+        var request = buildRequest("DELETE", "/session", null);
+        var response = sendRequest(request);
+        handleResponse(response, null);
+        authToken = null;
+    }
+
+    public ListGamesResponse listGames() throws DataAccessException {
+        var request = buildRequest("GET", "/game", null);
+        var response = sendRequest(request);
+        return handleResponse(response, ListGamesResponse.class);
+    }
+
+    public GameData.GameIDResponse createGame(CreateGameRequest createGameRequest) throws DataAccessException {
+        var request = buildRequest("POST", "/game", createGameRequest);
+        var response = sendRequest(request);
+        return handleResponse(response, GameData.GameIDResponse.class);
+    }
+
+    public void joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
+        var request = buildRequest("PUT", "/game", joinGameRequest);
+        var response = sendRequest(request);
+        handleResponse(response, null);
+    }
+
+    private HttpRequest buildRequest(String method, String path, Object body) {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl + path))
+                .method(method, makeRequestBody(body));
+        if (authToken != null) {
+            request.header("Authorization", authToken);
+        }
+        if (body != null) {
+            request.setHeader("Content-Type", "application/json");
+        }
+        return request.build();
+    }
+
+    private BodyPublisher makeRequestBody(Object request) {
+        if (request != null) {
+            return BodyPublishers.ofString(new Gson().toJson(request));
+        } else {
+            return BodyPublishers.noBody();
+        }
+    }
+
+    private HttpResponse<String> sendRequest(HttpRequest request) throws DataAccessException {
+        try {
+            return client.send(request, BodyHandlers.ofString());
+        } catch (Exception ex) {
+            throw new DataAccessException(DataAccessException.Code.ServerError);
+        }
+    }
+
+    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws DataAccessException {
+        var status = response.statusCode();
+        if (!isSuccessful(status)) {
+            var body = response.body();
+            if (body != null) {
+                throw DataAccessException.fromJson(body);
+            }
+
+            throw new DataAccessException(DataAccessException.fromHttpStatusCode(status));
+        }
+
+        if (responseClass != null) {
+            return new Gson().fromJson(response.body(), responseClass);
+        }
+
+        return null;
+    }
+
+    private boolean isSuccessful(int status) {
+        return status / 100 == 2;
+    }
+
+}
