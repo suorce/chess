@@ -7,7 +7,7 @@ import java.util.List;
 
 public class PostLoginClient implements Client {
     private final ServerFacade facade;
-    private HashMap<Integer, Integer> listToId = new HashMap<>();
+    private final HashMap<Integer, Integer> listToId = new HashMap<>();
 
     public PostLoginClient(ServerFacade facade) {
         this.facade = facade;
