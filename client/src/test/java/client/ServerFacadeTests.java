@@ -181,11 +181,88 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @DisplayName("Create Game Without Authentication")
+    @DisplayName("Create Game Without Auth")
     public void createGameUnauthorized() {
         DataAccessException ex = assertThrows(
                 DataAccessException.class,
                 () -> facade.createGame(new CreateGameRequest("game1"))
+        );
+        assertEquals(DataAccessException.Code.Unauthorized, ex.code());
+    }
+
+    // joinGame
+
+    @Test
+    @DisplayName("Join Game")
+    public void joinGame() throws DataAccessException {
+        facade.login(new LoginRequest("alice", "password123"));
+        GameData.GameIDResponse response = facade.createGame(
+                new CreateGameRequest("game1")
+        );
+        int gameID = response.gameID();
+        facade.joinGame(new JoinGameRequest("WHITE", gameID)); // alice plays WHITE
+
+        ListGamesResponse games = facade.listGames();
+        assertEquals("alice", games.games().get(0).whiteUsername());    // verify join
+        assertNull(games.games().get(0).blackUsername());
+
+        bobFacade.login(new LoginRequest("bob", "password456"));    // bob logs in and plays BLACK
+        bobFacade.joinGame(new JoinGameRequest("BLACK", gameID));
+        games = facade.listGames();
+
+        assertEquals("alice", games.games().get(0).whiteUsername());    // verify bob joined on alice's client
+        assertEquals("bob", games.games().get(0).blackUsername());
+    }
+
+    @Test
+    @DisplayName("Join Game With Taken Color")
+    public void joinGameTakenColor() throws DataAccessException {
+        facade.login(new LoginRequest("alice", "password123"));
+        GameData.GameIDResponse response = facade.createGame(
+                new CreateGameRequest("game1")
+        );
+        int gameID = response.gameID();
+        facade.joinGame(new JoinGameRequest("WHITE", gameID));  // alice joins WHITE
+
+        bobFacade.login(new LoginRequest("bob", "password456"));
+        DataAccessException ex = assertThrows(
+                DataAccessException.class,
+                () -> bobFacade.joinGame(new JoinGameRequest("WHITE", gameID))  // bob tries to take WHITE
+        );
+        assertEquals(DataAccessException.Code.AlreadyTaken, ex.code());
+    }
+
+    @Test
+    @DisplayName("Join Nonexistent Game")
+    public void joinNonexistentGame() throws DataAccessException {
+        facade.login(new LoginRequest("alice", "password123"));
+        DataAccessException ex = assertThrows(
+                DataAccessException.class,
+                () -> facade.joinGame(new JoinGameRequest("WHITE", 9999))
+        );
+        assertEquals(DataAccessException.Code.BadRequest, ex.code());
+    }
+
+    @Test
+    @DisplayName("Join Game With Invalid Color")
+    public void joinGameInvalidColor() throws DataAccessException {
+        facade.login(new LoginRequest("alice", "password123"));
+        GameData.GameIDResponse response = facade.createGame(
+                new CreateGameRequest("game1")
+        );
+        DataAccessException ex = assertThrows(
+                DataAccessException.class,
+                () -> facade.joinGame(new JoinGameRequest("RED", response.gameID()))
+        );
+        assertEquals(DataAccessException.Code.BadRequest, ex.code());
+    }
+
+    @Test
+    @DisplayName("Join Game Without Auth")
+    public void joinGameUnauthorized() {
+        DataAccessException ex = assertThrows(
+                DataAccessException.class,
+                () -> facade.joinGame(new JoinGameRequest("WHITE", 1))
         );
         assertEquals(DataAccessException.Code.Unauthorized, ex.code());
     }
