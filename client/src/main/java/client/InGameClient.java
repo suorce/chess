@@ -37,9 +37,9 @@ public class InGameClient implements Client {
             for (int col = j; col != i-inc; col -= inc) {
                 ChessPiece piece = board.getPiece(new ChessPosition(row,col));
                 if ((row + col) % 2 == 0) {
-                    result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
-                } else {
                     result.append(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
+                } else {
+                    result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
                 }
                 result.append(prettyPiece(piece));
             }

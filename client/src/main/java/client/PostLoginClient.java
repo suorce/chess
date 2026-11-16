@@ -34,9 +34,9 @@ public class PostLoginClient implements Client {
                     .append(". ")
                     .append(game.gameName())
                     .append(": ")
-                    .append(game.whiteUsername())
-                    .append(" vs. ")
-                    .append(game.blackUsername());
+                    .append(game.whiteUsername()).append("(W)")
+                    .append(" vs ")
+                    .append(game.blackUsername()).append("(B)");
         }
         return result.toString();
     }
@@ -55,9 +55,16 @@ public class PostLoginClient implements Client {
         if (tokens.length != 3) {
             throw new DataAccessException(DataAccessException.Code.BadRequest);
         }
-        if (!listToId.containsKey(Integer.parseInt(tokens[1]))) {
+        int listID;
+        try {
+            listID = Integer.parseInt(tokens[1]);
+        } catch (NumberFormatException ex) {
             throw new DataAccessException(DataAccessException.Code.BadRequest);
         }
+        if (!listToId.containsKey(listID)) {
+            throw new DataAccessException(DataAccessException.Code.BadRequest);
+        }
+
         int gameID = listToId.get(Integer.parseInt(tokens[1]));
         JoinGameRequest joinGameRequest = new JoinGameRequest(tokens[2], gameID);
         facade.joinGame(joinGameRequest);
