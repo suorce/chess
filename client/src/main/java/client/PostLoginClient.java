@@ -18,26 +18,37 @@ public class PostLoginClient implements Client {
             throw new DataAccessException(DataAccessException.Code.BadRequest);
         }
         CreateGameRequest createGameRequest = new CreateGameRequest(tokens[1]);
-        GameData.GameIDResponse gameIDResponse = facade.createGame(createGameRequest);
+        facade.createGame(createGameRequest);
+        refreshGamesList();
         return "Game created with name = " + tokens[1];
     }
 
     public String listGames() throws DataAccessException {
-        listToId.clear();
         StringBuilder result = new StringBuilder();
+        List<GameListItem> games = refreshGamesList();
+        int listNum = 1;
+
+        for (GameListItem game : games) {
+            result.append("\n   ")
+                    .append(listNum++)
+                    .append(". ")
+                    .append(game.gameName())
+                    .append(": ")
+                    .append(game.whiteUsername())
+                    .append(" vs. ")
+                    .append(game.blackUsername());
+        }
+        return result.toString();
+    }
+
+    private List<GameListItem> refreshGamesList() throws DataAccessException {
+        listToId.clear();
         int listNum = 1;
         ListGamesResponse listGamesResponse = facade.listGames();
         for (GameListItem game : listGamesResponse.games()) {
-            listToId.put(listNum, game.gameID());
-            result.append("\n   " +
-                    String.valueOf(listNum) + ". " +
-                    game.gameName() + ": " +
-                    game.whiteUsername() + " vs. " +
-                    game.blackUsername()
-            );
-            listNum += 1;
+            listToId.put(listNum++, game.gameID());
         }
-        return result.toString();
+        return listGamesResponse.games();
     }
 
     public String joinGame(String[] tokens) throws DataAccessException {
