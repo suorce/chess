@@ -88,22 +88,19 @@ public class Repl {
     }
 
     private void inGameLoop(Scanner scanner) {
-//        try {
-            while (state == State.INGAME) {
-                String[] tokens = getInput(scanner, inGameClient);
-                switch (tokens[0]) {
-                    case "draw" -> System.out.println(inGameClient.drawBoard(perspective));
-                    case "exit" -> {
-                        perspective = null;
-                        state = State.POSTLOGIN;
-                    }
-                    case "quit" -> state = State.QUIT;
-                    default -> System.out.println(inGameClient.help());
+        System.out.println(inGameClient.drawBoard(perspective));
+        while (state == State.INGAME) {
+            String[] tokens = getInput(scanner, inGameClient);
+            switch (tokens[0]) {
+                case "draw" -> System.out.println(inGameClient.drawBoard(perspective));
+                case "exit" -> {
+                    perspective = null;
+                    state = State.POSTLOGIN;
                 }
+                case "quit" -> state = State.QUIT;
+                default -> System.out.println(inGameClient.help());
             }
-//        } catch (DataAccessException ex){
-//            System.out.println(ex.message());
-//        }
+        }
     }
 
     private String[] getInput(Scanner scanner, Client client) {
