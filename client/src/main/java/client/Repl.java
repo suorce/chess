@@ -57,7 +57,7 @@ public class Repl {
 
     private void postLoginLoop(Scanner scanner) {
         try {
-            System.out.println(postLoginClient.listGames()); // show games list and populate PostLoginClient.listToId
+            postLoginClient.refreshGamesList(); // show games list and populate PostLoginClient.listToId
             while (state == State.POSTLOGIN) {
                 String[] tokens = getInput(scanner, postLoginClient);
                 switch (tokens[0]) {

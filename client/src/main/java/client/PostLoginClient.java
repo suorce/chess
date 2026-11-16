@@ -41,7 +41,7 @@ public class PostLoginClient implements Client {
         return result.toString();
     }
 
-    private List<GameListItem> refreshGamesList() throws DataAccessException {
+    public List<GameListItem> refreshGamesList() throws DataAccessException {
         listToId.clear();
         int listNum = 1;
         ListGamesResponse listGamesResponse = facade.listGames();
