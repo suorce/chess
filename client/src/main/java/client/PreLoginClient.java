@@ -39,7 +39,6 @@ public class PreLoginClient implements Client {
                  - register <USERNAME> <PASSWORD> <EMAIL> - an account
                  - login <USERNAME> <PASSWORD> - to existing account
                  - quit - program
-                 - help - see available commands
-                """;
+                 - help - see available commands""";
     }
 }

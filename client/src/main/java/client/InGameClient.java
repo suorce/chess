@@ -84,7 +84,6 @@ public class InGameClient implements Client {
         return """
                  - draw - the board
                  - exit - the game
-                 - quit - the application
-                """;
+                 - quit - the application""";
     }
 }

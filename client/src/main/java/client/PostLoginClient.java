@@ -86,7 +86,6 @@ public class PostLoginClient implements Client {
                  - join <ID> [WHITE|BLACK] - a game
                  - observe <ID> - a game
                  - logout - of current session
-                 - help - see available commands
-                """;
+                 - help - see available commands""";
     }
 }
