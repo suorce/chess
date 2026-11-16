@@ -25,21 +25,28 @@ public class InGameClient implements Client {
 
     private String prettyBoard(ChessBoard board, int i, int j, int inc) {
         StringBuilder result = new StringBuilder();
+        StringBuilder colLabel = new StringBuilder();
         result.append("\n");
 
-        for (int row = i; row != j-1; row += inc) {
-            for (int col = j-1; col != i+1; col += -inc) {
+        colLabel.append("  ");
+        for (int row = i; row != j+inc; row += inc) {
+            result.append(String.valueOf(row) + " ");
+            for (int col = j; col != i-inc; col -= inc) {
+                if (row == 1) {
+                    colLabel.append(String.valueOf(col) + "\u2003" + " ");
+                }
                 ChessPiece piece = board.getPiece(new ChessPosition(row,col));
-                if (row + col % 2 == 0) {
-                    result.append(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
-                } else {
+                if ((row + col) % 2 == 0) {
                     result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
+                } else {
+                    result.append(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
                 }
                 result.append(prettyPiece(piece));
             }
+            result.append(EscapeSequences.RESET_BG_COLOR);
             result.append("\n");
         }
-
+        result.append(colLabel);
         return result.toString();
     }
 
