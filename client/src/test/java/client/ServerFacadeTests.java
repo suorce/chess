@@ -118,4 +118,18 @@ public class ServerFacadeTests {
         );
         assertEquals(DataAccessException.Code.Unauthorized, ex.code());
     }
+
+    // logout
+
+    @Test
+    @DisplayName("Logout User")
+    public void logout() throws DataAccessException {
+        facade.login(new LoginRequest("alice", "password123"));
+        facade.logout();
+        DataAccessException ex = assertThrows(
+                DataAccessException.class,
+                () -> facade.listGames()
+        );
+        assertEquals(DataAccessException.Code.Unauthorized, ex.code());
+    }
 }
