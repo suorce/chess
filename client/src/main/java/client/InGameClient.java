@@ -51,58 +51,41 @@ public class InGameClient implements Client {
     }
 
     private String prettyPiece(ChessPiece piece) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         if (piece == null) {
-            result = EscapeSequences.EMPTY;
+            result.append(EscapeSequences.EMPTY);
         } else {
             switch (piece.getTeamColor()) {
                 case WHITE -> {
-                    switch (piece.getPieceType()) {
-                        case KING -> {
-                            result = EscapeSequences.WHITE_KING;
-                        }
-                        case QUEEN -> {
-                            result = EscapeSequences.WHITE_QUEEN;
-                        }
-                        case BISHOP -> {
-                            result = EscapeSequences.WHITE_BISHOP;
-                        }
-                        case KNIGHT -> {
-                            result = EscapeSequences.WHITE_KNIGHT;
-                        }
-                        case ROOK -> {
-                            result = EscapeSequences.WHITE_ROOK;
-                        }
-                        case PAWN -> {
-                            result = EscapeSequences.WHITE_PAWN;
-                        }
-                    }
+                    result.append(EscapeSequences.SET_TEXT_COLOR_WHITE);
                 }
                 case BLACK -> {
-                    switch (piece.getPieceType()) {
-                        case KING -> {
-                            result = EscapeSequences.BLACK_KING;
-                        }
-                        case QUEEN -> {
-                            result = EscapeSequences.BLACK_QUEEN;
-                        }
-                        case BISHOP -> {
-                            result = EscapeSequences.BLACK_BISHOP;
-                        }
-                        case KNIGHT -> {
-                            result = EscapeSequences.BLACK_KNIGHT;
-                        }
-                        case ROOK -> {
-                            result = EscapeSequences.BLACK_ROOK;
-                        }
-                        case PAWN -> {
-                            result = EscapeSequences.BLACK_PAWN;
-                        }
-                    }
+                    result.append(EscapeSequences.SET_TEXT_COLOR_BLACK);
+                }
+            }
+            switch (piece.getPieceType()) {
+                case KING -> {
+                    result.append(EscapeSequences.BLACK_KING);
+                }
+                case QUEEN -> {
+                    result.append(EscapeSequences.BLACK_QUEEN);
+                }
+                case BISHOP -> {
+                    result.append(EscapeSequences.BLACK_BISHOP);
+                }
+                case KNIGHT -> {
+                    result.append(EscapeSequences.BLACK_KNIGHT);
+                }
+                case ROOK -> {
+                    result.append(EscapeSequences.BLACK_ROOK);
+                }
+                case PAWN -> {
+                    result.append(EscapeSequences.BLACK_PAWN);
                 }
             }
         }
-        return result;
+        result.append(EscapeSequences.RESET_TEXT_COLOR);
+        return result.toString();
     }
 
     @Override
