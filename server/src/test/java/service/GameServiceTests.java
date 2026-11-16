@@ -18,8 +18,6 @@ public class GameServiceTests extends BaseServiceTests {
     @BeforeEach
     void startGameService() throws DataAccessException {
         gameService = new GameService(dataAccess, authService);
-        gameService.incrementGameIDForTesting();
-        gameService.incrementGameIDForTesting();
     }
 
     @Test
