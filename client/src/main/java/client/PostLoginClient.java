@@ -4,6 +4,7 @@ import dataaccess.DataAccessException;
 import model.*;
 import server.ServerFacade;
 import java.util.HashMap;
+import java.util.List;
 
 public class PostLoginClient implements Client {
     private final ServerFacade facade;
@@ -53,6 +54,9 @@ public class PostLoginClient implements Client {
 
     public String joinGame(String[] tokens) throws DataAccessException {
         if (tokens.length != 3) {
+            throw new DataAccessException(DataAccessException.Code.BadRequest);
+        }
+        if (!listToId.containsKey(Integer.parseInt(tokens[1]))) {
             throw new DataAccessException(DataAccessException.Code.BadRequest);
         }
         int gameID = listToId.get(Integer.parseInt(tokens[1]));
