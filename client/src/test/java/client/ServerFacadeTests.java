@@ -40,4 +40,18 @@ public class ServerFacadeTests {
         bobFacade.register(new UserData("bob", "password456", "bob@email.com"));
         bobFacade.logout();
     }
+
+    @Test
+    @DisplayName("Clear database")
+    public void clear() throws DataAccessException {
+        facade.login(new LoginRequest("alice", "password123"));
+        facade.clear();
+
+        // clear should remove Alice's existing auth
+        DataAccessException ex = assertThrows(
+                DataAccessException.class,
+                () -> facade.listGames()
+        );
+        assertEquals(DataAccessException.Code.Unauthorized, ex.code());
+    }
 }
