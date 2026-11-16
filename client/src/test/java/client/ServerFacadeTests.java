@@ -41,6 +41,8 @@ public class ServerFacadeTests {
         bobFacade.logout();
     }
 
+    // clear
+
     @Test
     @DisplayName("Clear database")
     public void clear() throws DataAccessException {
@@ -54,6 +56,8 @@ public class ServerFacadeTests {
         );
         assertEquals(DataAccessException.Code.Unauthorized, ex.code());
     }
+
+    // register
 
     @Test
     @DisplayName("Register User")
@@ -75,5 +79,43 @@ public class ServerFacadeTests {
                 )
         );
         assertEquals(DataAccessException.Code.AlreadyTaken, ex.code());
+    }
+
+    // login
+
+    @Test
+    @DisplayName("Login User")
+    public void login() throws DataAccessException {
+        AuthData authData = facade.login(
+                new LoginRequest("alice", "password123")
+        );
+        assertEquals("alice", authData.username());
+        assertNotNull(authData.authToken());
+        assertNotNull(facade.listGames());  // verify token stored in facade
+    }
+
+    @Test
+    @DisplayName("Login With Incorrect Password")
+    public void loginIncorrectPassword() {
+        DataAccessException ex = assertThrows(
+                DataAccessException.class,
+                () -> facade.login(
+                        new LoginRequest("alice", "wrongpassword")
+                )
+        );
+
+        assertEquals(DataAccessException.Code.Unauthorized, ex.code());
+    }
+
+    @Test
+    @DisplayName("Login With Nonexistent User")
+    public void loginNonexistentUser() {
+        DataAccessException ex = assertThrows(
+                DataAccessException.class,
+                () -> facade.login(
+                        new LoginRequest("eve", "password123")
+                )
+        );
+        assertEquals(DataAccessException.Code.Unauthorized, ex.code());
     }
 }
