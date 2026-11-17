@@ -65,7 +65,7 @@ public class PostLoginClient implements Client {
             throw new DataAccessException(DataAccessException.Code.BadRequest);
         }
 
-        int gameID = listToId.get(Integer.parseInt(tokens[1]));
+        int gameID = listToId.get(listID);
         JoinGameRequest joinGameRequest = new JoinGameRequest(tokens[2], gameID);
         facade.joinGame(joinGameRequest);
         return "Successfully joined game " + gameID + " as " + tokens[2];
